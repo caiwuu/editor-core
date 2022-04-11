@@ -1,4 +1,3 @@
-import Component from './component'
 import { stylesModule } from './modules/styles'
 import { attributesModule } from './modules/attributes'
 import { listenersModule } from './modules/listeners'
@@ -6,22 +5,20 @@ import { classesModule } from './modules/classes'
 const VNElmMap = new WeakMap()
 const VNInsMap = new WeakMap()
 const BUILTINPROPS = ['ref', 'key', 'ns']
-
+export function createRef() {
+  return { current: null }
+}
 export function mutualMap(map) {
   return (elm, vnode) => map.set(elm, vnode).set(vnode, elm)
 }
 export const vnodeElmMap = mutualMap(VNElmMap)
 export const vnodeInsMap = mutualMap(VNInsMap)
-class Child extends Component {
-  render() {
-    return <span onClick={() => console.log(22)}>{this.props.name}</span>
-  }
-}
-function updateProps(vnode, oldVnode) {
+
+export function updateProps(vnode, oldVnode) {
   const elm = VNElmMap.get(vnode)
   if (vnode.type === 'text') {
     if (vnode.children !== oldVnode.children) {
-      vnode.elm.data = vnode.children
+      elm.data = vnode.children
     }
   } else {
     stylesModule.update(elm, vnode, oldVnode)
@@ -108,24 +105,7 @@ function Element(type, key, ref, props, children) {
   }
   return element
 }
-function mount(elm, container) {
+export function mount(elm, container) {
   document.querySelector(container).appendChild(elm)
 }
-export { VNElmMap }
-// test
-function render() {
-  return (
-    <div class='www ss' style={{ color: 'red' }} id='ids'>
-      <span style={{ fontSize: '20px', color: 'cyan' }}>234</span>
-      <Child name='this is a span' />
-    </div>
-  )
-}
-const vn = render(createElement)
-console.log(vn)
-const elm = createElm(vn)
-mount(elm, '#editor-root')
-console.log(elm)
-window.VNElmMap = VNElmMap
-console.log(VNElmMap)
-console.log(VNInsMap)
+export { VNElmMap, VNInsMap }

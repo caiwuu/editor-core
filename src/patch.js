@@ -1,13 +1,13 @@
 import {
   VNElmMap,
   VNInsMap,
-  createEml,
+  createElm,
   updateProps,
   createElement as h,
   vnodeElmMap,
   vnodeInsMap,
 } from './createElement'
-import { isUndef, isDef } from '../share/utils'
+import { isUndef, isDef } from './utils'
 let insertedVnodeQueue = []
 function sameVnode(vnode, oldVnode) {
   return vnode?.key === oldVnode?.key && vnode?.type === oldVnode?.type
@@ -38,10 +38,9 @@ function addVnodes(parentElm, before = null, vnodes, startIdx, endIdx) {
   }
 }
 function invokeDestroyHook(vnode) {
-  const vm = vnode.vm
+  const vm = VNElmMap.get(vnode)
   if (vm !== undefined) {
     vm?.destroy?.(vnode)
-    // for (let i = 0; i < cbs.destroy.length; ++i) cbs.destroy[i](vnode)
     if (vnode.children !== undefined) {
       for (let j = 0; j < vnode.children.length; ++j) {
         const child = vnode.children[j]
@@ -57,7 +56,7 @@ function removeVnodes(parentElm, vnodes, startIdx, endIdx) {
     const ch = vnodes[startIdx]
     if (ch != null) {
       invokeDestroyHook(ch)
-      parentElm.removeChild(ch.elm)
+      parentElm.removeChild(VNElmMap.get(ch))
     }
   }
 }
@@ -86,7 +85,6 @@ export function updateChildren(parentElm, newCh, oldCh) {
       newEndVnode = newCh[--newEndIdx]
       // 新头=旧头
     } else if (sameVnode(newStartVnode, oldStartVnode)) {
-      console.log(oldStartVnode.isDirty)
       patchVnode(newStartVnode, oldStartVnode)
       oldStartVnode = oldCh[++oldStartIdx]
       newStartVnode = newCh[++newStartIdx]
@@ -147,22 +145,41 @@ export function updateChildren(parentElm, newCh, oldCh) {
   }
 }
 function patchVnode(vnode, oldVnode) {
+  console.log(vnode, oldVnode)
   if (oldVnode === vnode) return
-
   if (typeof vnode.type === 'function') {
     if (vnode.type.isComponent) {
-      const ins = oldVnode.ins
-      const oldVn = VNInsMap.get(vnode)
+      const ins = (vnode.ins = oldVnode.ins)
+      const oldVn = VNInsMap.get(ins)
+      ins.props = vnode.props
+      const newVn = ins.render(h)
+      patchVnode(newVn, oldVn)
+    } else {
+      const oldVn = VNInsMap.get(oldVnode)
+      const newVn = vnode.type(h, vnode.props)
+      patchVnode(newVn, oldVn)
     }
+  } else if (vnode.type === 'text') {
+    const elm = VNElmMap.get(oldVnode)
+    vnodeElmMap(elm, vnode)
+    VNElmMap.delete(oldVnode)
+    updateProps(vnode, oldVnode)
+  } else {
+    const elm = VNElmMap.get(oldVnode)
+    const ins = VNInsMap.get(oldVnode)
+    if (ins) {
+      vnodeInsMap(ins, vnode)
+      VNInsMap.delete(oldVnode)
+      vnode.ins = ins
+    }
+    vnodeElmMap(elm, vnode)
+    VNElmMap.delete(oldVnode)
+    // update childen
+    const oldCh = oldVnode.children
+    const ch = vnode.children
+    updateProps(vnode, oldVnode)
+    if (oldCh !== ch) updateChildren(elm, ch, oldCh)
   }
-
-  const elm = VNElmMap.get(oldVnode)
-  vnodeElmMap(elm, vnode)
-  VNElmMap.delete(oldVnode)
-  const oldCh = oldVnode.children
-  const ch = vnode.children
-  updateProps(vnode, oldVnode)
-  if (oldCh !== ch) updateChildren(elm, ch, oldCh)
 }
 export function patch(vnode, oldVnode) {
   insertedVnodeQueue = []
@@ -178,9 +195,8 @@ export function patch(vnode, oldVnode) {
     vnodeElmMap(elm, oldVnode)
   }
   if (sameVnode(vnode, oldVnode)) {
+    console.log(vnode, oldVnode)
     patchVnode(vnode, oldVnode)
-    vnodeElmMap(VNElmMap.get(oldVnode), vnode)
-    VNElmMap.delete(oldVnode)
     isInit && isDef(vnodeInsMap.get(vnode)) && insertedVnodeQueue.push(vnodeInsMap.get(vnode))
     isInit = false
   } else {
