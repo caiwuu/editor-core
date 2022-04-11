@@ -1,1 +1,1 @@
-import { createElement } from "./createElement";
+import { createElement, VNElmMap } from './createElement'

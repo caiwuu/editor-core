@@ -20,7 +20,10 @@ module.exports = function (babel) {
           return
         }
         if (isConvertable(path, state)) {
-          if (!path.node.params.length||path.node.params.length && path.node.params[0].name !== 'h') {
+          if (
+            !path.node.params.length ||
+            (path.node.params.length && path.node.params[0].name !== 'h')
+          ) {
             path
               .get('body')
               .unshiftContainer(
@@ -91,10 +94,17 @@ module.exports = function (babel) {
         // 首字母大写的被视作组件处理
         tagName.charCodeAt(0) < 96 ? t.identifier(tagName) : t.stringLiteral(tagName),
         convertAttribute(path.node.openingElement.attributes),
-        t.ArrayExpression(path.get('children').map((ele) => converJSX(ele))),
+        t.ArrayExpression(
+          path
+            .get('children')
+            .map((ele) => converJSX(ele))
+            .filter((ele) => ele)
+        ),
       ])
     } else if (path.isJSXText()) {
-      return t.stringLiteral(path.node.value.replace(/\n\s+/g, ''))
+      return path.node.value.replace(/\n\s+/g, '')
+        ? t.stringLiteral(path.node.value.replace(/\n\s+/g, ''))
+        : null
     } else if (path.isJSXExpressionContainer()) {
       // 注释转化成空字符串节点，空串不会被渲染函数处理
       if (path.get('expression').isJSXEmptyExpression()) {
