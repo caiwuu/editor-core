@@ -1,8 +1,15 @@
 const babel = require('@babel/core')
 const t = require('@babel/types')
 const code = `
-function render(){
-  return <div class="www" style='color:red' id="ids" ref="qq"><span>234</span><Child></Child></div>
+function render() {
+  return (
+    <span onClick={this.handleClick}>
+      {this.state.name}
+      <Dialog ref={this.dialogRef}>
+        <div>111</div>
+      </Dialog>
+    </span>
+  )
 }
 `
 const visitor = {
@@ -23,7 +30,10 @@ const visitor = {
       return
     }
     if (isConvertable(path, state)) {
-      if (!path.node.params.length || path.node.params.length&&path.node.params[0].name !== 'h') {
+      if (
+        !path.node.params.length ||
+        (path.node.params.length && path.node.params[0].name !== 'h')
+      ) {
         path
           .get('body')
           .unshiftContainer(
@@ -84,12 +94,19 @@ function converJSX(path) {
   if (path.isJSXElement()) {
     const tagName = path.node.openingElement.name.name
     return t.callExpression(t.identifier('h'), [
-      t.stringLiteral(tagName),
+      tagName.charCodeAt(0) < 96 ? t.identifier(tagName) : t.stringLiteral(tagName),
       convertAttribute(path.node.openingElement.attributes),
-      t.ArrayExpression(path.get('children').map((ele) => converJSX(ele))),
+      t.ArrayExpression(
+        path
+          .get('children')
+          .map((ele) => converJSX(ele))
+          .filter((ele) => ele)
+      ),
     ])
   } else if (path.isJSXText()) {
-    return t.stringLiteral(path.node.value.replace(/\n\s+/g, ''))
+    return path.node.value.replace(/\n\s+/g, '')
+      ? t.stringLiteral(path.node.value.replace(/\n\s+/g, ''))
+      : null
   } else if (path.isJSXExpressionContainer()) {
     return path.node.expression
   }

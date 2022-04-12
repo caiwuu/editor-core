@@ -1,6 +1,7 @@
 const emptySet = []
-function updateClasses(elm,vnode, oldVnode) {
-  elm.className = (vnode?.props.class || '').trim()
+function updateClasses(elm, vnode, oldVnode) {
+  const className = (vnode?.props.class || '').trim()
+  if (className) elm.className = className
   // let oldClasses , classes;
   // const oClassName = (oldVnode?.props.class || '').trim()
   // const nClassName = (vnode?.props.class || '').trim()
