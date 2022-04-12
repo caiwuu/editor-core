@@ -91,6 +91,7 @@ export function createElm(vnode, position = '0') {
       : document.createElement(vnode.type)
     if (vnode.ref) vnode.ref.current = elm
   }
+  console.log(vnode)
   if (vnode.children.length === 1) {
     const position = vnode.position + '-' + '0'
     elm.appendChild(createElm(vnode.children[0], position))
@@ -113,7 +114,11 @@ export function createElement(type, config = {}, children = []) {
   const key = config.key || null
   for (let propName in config) {
     if (!BUILTINPROPS.includes(propName)) {
-      props[propName] = config[propName]
+      if (propName === 'style' && isPrimitive(config[propName])) {
+        props[propName] = styleToObj(config[propName])
+      } else {
+        props[propName] = config[propName]
+      }
     }
   }
   return Element(type, key, ref, props, children.flat())

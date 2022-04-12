@@ -197,7 +197,7 @@ export function patch(vnode, oldVnode) {
   if (sameVnode(vnode, oldVnode)) {
     patchVnode(vnode, oldVnode)
   } else {
-    const oldElm = VNElmMap.get(oldVnode)
+    let oldElm = VNElmMap.get(oldVnode)
     const newElm = createElm(vnode)
     const ins = VNInsMap.get(oldVnode)
     oldElm.parentNode.replaceChild(newElm, oldElm)
@@ -211,7 +211,7 @@ export function patch(vnode, oldVnode) {
   }
   isInit = false
   insertedInsQueue.forEach((ele) => {
-    if (ele.mounted) ele.mounted()
+    if (ele.onMounted) ele.onMounted()
   })
   return VNElmMap.get(vnode)
 }

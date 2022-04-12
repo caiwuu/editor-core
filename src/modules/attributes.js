@@ -3,7 +3,7 @@ const xmlNS = 'http://www.w3.org/XML/1998/namespace'
 const colonChar = 58
 const xChar = 120
 
-function updateAttrs(elm,vnode, oldVnode) {
+function updateAttrs(elm, vnode, oldVnode) {
   let key
   let oldAttrs = oldVnode?.props
   let attrs = vnode.props
@@ -14,7 +14,7 @@ function updateAttrs(elm,vnode, oldVnode) {
   attrs = attrs || {}
   // update modified attributes, add new attributes
   for (key in attrs) {
-    if(/^on[A-Z]|class|style/.test(key)){
+    if (/^on[A-Z]|class|style|children/.test(key)) {
       continue
     }
     const cur = attrs[key]
@@ -24,7 +24,7 @@ function updateAttrs(elm,vnode, oldVnode) {
         elm.setAttribute(key, '')
       } else if (cur === false) {
         elm.removeAttribute(key)
-      }  else {
+      } else {
         if (key.charCodeAt(0) !== xChar) {
           elm.setAttribute(key, cur)
         } else if (key.charCodeAt(3) === colonChar) {

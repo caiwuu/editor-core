@@ -1,13 +1,15 @@
 import { createElement, insertedInsQueue, VNElmMap, VNInsMap, createRef } from './createElement'
 import Component from './component'
 import { patch } from './patch'
+import './componentsDomo/index'
+import './style.styl'
 function FunCom(h, props) {
   return <del>{props.children}</del>
 }
 class Child extends Component {
   constructor(props) {
     super(props)
-    this.state = { name: 'caiwu' }
+    this.state = { name: 'caiwu', display: false }
     this.dialogRef = createRef()
   }
   render() {
@@ -15,22 +17,26 @@ class Child extends Component {
       <span onClick={this.handleClick}>
         {this.state.name}
         <FunCom>22</FunCom>
-        <Dialog ref={this.dialogRef}>
-          <div>111</div>
-        </Dialog>
+        {this.state.display ? (
+          <Dialog ref={this.dialogRef}>
+            <div>111</div>
+          </Dialog>
+        ) : (
+          ''
+        )}
       </span>
     )
   }
   handleClick = () => {
     console.log(this.dialogRef)
-    this.dialogRef.current.toggle()
-    this.setState({ name: 'hhhha' })
+    this.setState({ name: 'hhhha', display: !this.state.display })
+    // this.dialogRef.current.toggle()
   }
 }
 export class Dialog extends Component {
   constructor(props) {
     super(props)
-    this.state = { visiable: false, count: 0 }
+    this.state = { visiable: true, count: 0 }
   }
   render() {
     return (
@@ -55,8 +61,8 @@ export class Dialog extends Component {
       </div>
     )
   }
-  mounted() {
-    console.log('dialog mounted')
+  onMounted() {
+    console.log('dialog onMounted')
   }
   toggle() {
     this.state.count++
