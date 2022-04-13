@@ -10,7 +10,6 @@ export default class Component {
     throw Error('Component does not implement a required interface "render"')
   }
   setState(partialState) {
-    console.log('setState')
     enqueueSetState(partialState, this)
   }
   _update_() {

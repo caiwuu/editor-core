@@ -2,7 +2,6 @@ const xlinkNS = 'http://www.w3.org/1999/xlink'
 const xmlNS = 'http://www.w3.org/XML/1998/namespace'
 const colonChar = 58
 const xChar = 120
-
 function updateAttrs(elm, vnode, oldVnode) {
   let key
   let oldAttrs = oldVnode?.props
@@ -14,7 +13,7 @@ function updateAttrs(elm, vnode, oldVnode) {
   attrs = attrs || {}
   // update modified attributes, add new attributes
   for (key in attrs) {
-    if (/^on[A-Z]|class|style|children/.test(key)) {
+    if (/^on[A-Z]|class|style/.test(key)) {
       continue
     }
     const cur = attrs[key]

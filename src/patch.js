@@ -37,26 +37,33 @@ function addVnodes(parentElm, before = null, vnodes, startIdx, endIdx) {
     }
   }
 }
-function invokeDestroyHook(vnode) {
-  const vm = VNElmMap.get(vnode)
-  if (vm !== undefined) {
-    vm?.destroy?.(vnode)
-    if (vnode.children !== undefined) {
-      for (let j = 0; j < vnode.children.length; ++j) {
-        const child = vnode.children[j]
+function invokeDestroyHook(vnode, destoryQueue) {
+  const vn = vnode.ins ? VNInsMap.get(vnode.ins) : vnode
+  if (vn !== undefined) {
+    const ins = VNInsMap.get(vn)
+    ins?.onBeforeUnmount?.()
+    if (vn.children !== undefined) {
+      for (let j = 0; j < vn.children.length; ++j) {
+        const child = vn.children[j]
         if (child != null && typeof child !== 'string') {
-          invokeDestroyHook(child)
+          invokeDestroyHook(child, destoryQueue)
         }
       }
     }
+    if (ins) destoryQueue.push(ins)
   }
 }
-function removeVnodes(parentElm, vnodes, startIdx, endIdx) {
+function removeVnodes(parentElm, oldCh, startIdx, endIdx) {
   for (; startIdx <= endIdx; ++startIdx) {
-    const ch = vnodes[startIdx]
-    if (ch != null) {
-      invokeDestroyHook(ch)
-      parentElm.removeChild(VNElmMap.get(ch))
+    const vnode = oldCh[startIdx]
+    if (vnode != null) {
+      let destoryQueue = []
+      invokeDestroyHook(vnode, destoryQueue)
+      parentElm.removeChild(VNElmMap.get(vnode))
+      destoryQueue.forEach((ins) => {
+        ins.onUnmounted?.()
+      })
+      destoryQueue = null
     }
   }
 }
@@ -95,7 +102,6 @@ export function updateChildren(parentElm, newCh, oldCh) {
       // 旧头=新尾
     } else if (sameVnode(newEndVnode, oldStartVnode)) {
       // Vnode moved right
-      console.log(oldStartVnode.isDirty)
       patchVnode(newEndVnode, oldStartVnode)
       parentElm.insertBefore(VNElmMap.get(oldStartVnode), VNElmMap.get(oldEndVnode).nextSibling)
       oldStartVnode = oldCh[++oldStartIdx]
@@ -183,14 +189,11 @@ export function patch(vnode, oldVnode) {
   if (isUndef(oldVnode)) {
     return createElm(vnode)
   }
-  let isInit = false
   const isRealElment = isDef(oldVnode.nodeType)
   // oldvnode 是dom，先转化为虚拟节点
   if (isRealElment) {
-    isInit = true
     const elm = oldVnode
     oldVnode = domToVNode(oldVnode)
-    console.log(oldVnode)
     vnodeElmMap(elm, oldVnode)
   }
   // 相同节点则执行更新逻辑
@@ -209,9 +212,9 @@ export function patch(vnode, oldVnode) {
     VNElmMap.delete(oldElm)
     oldElm = null
   }
-  isInit = false
   insertedInsQueue.forEach((ele) => {
     if (ele.onMounted) ele.onMounted()
   })
+  insertedInsQueue.length = 0
   return VNElmMap.get(vnode)
 }

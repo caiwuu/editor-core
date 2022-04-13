@@ -4,5 +4,5 @@ import ColorPicker from './colorPicker'
 patch(test(h), document.getElementById('components-test'))
 
 function test() {
-  return <ColorPicker color='#36cabd'></ColorPicker>
+  return <ColorPicker color='#36cabdaa'></ColorPicker>
 }

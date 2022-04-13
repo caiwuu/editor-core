@@ -50,6 +50,7 @@ export const vnodeElmMap = mutualMap(VNElmMap)
 export const vnodeInsMap = mutualMap(VNInsMap)
 
 export function updateProps(vnode, oldVnode) {
+  if (typeof vnode.type === 'function') return
   const elm = VNElmMap.get(vnode)
   if (vnode.type === 'text') {
     if (vnode.children !== oldVnode.children) {
@@ -62,8 +63,7 @@ export function updateProps(vnode, oldVnode) {
     attributesModule.update(elm, vnode, oldVnode)
   }
 }
-export function createElm(vnode, position = '0') {
-  vnode.position = position
+export function createElm(vnode) {
   let elm
   if (vnode.type === 'text') {
     elm = document.createTextNode(vnode.children)
@@ -91,16 +91,13 @@ export function createElm(vnode, position = '0') {
       : document.createElement(vnode.type)
     if (vnode.ref) vnode.ref.current = elm
   }
-  console.log(vnode)
   if (vnode.children.length === 1) {
-    const position = vnode.position + '-' + '0'
-    elm.appendChild(createElm(vnode.children[0], position))
+    elm.appendChild(createElm(vnode.children[0]))
   } else if (vnode.children.length > 1) {
     const fragment = document.createDocumentFragment()
     for (let index = 0; index < vnode.children.length; index++) {
       const ch = vnode.children[index]
-      const position = vnode.position + '-' + index
-      fragment.appendChild(createElm(ch, position))
+      fragment.appendChild(createElm(ch))
     }
     elm.appendChild(fragment)
   }
