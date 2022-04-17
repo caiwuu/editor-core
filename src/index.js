@@ -1,4 +1,4 @@
-import { createElement as h, insertedInsQueue, VNElmMap, VNInsMap } from './createElement'
+import { createElement as h, insertedInsQueue } from './createElement'
 import { patch } from './patch'
 import './componentsDomo/index'
 import './style.styl'

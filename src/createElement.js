@@ -3,8 +3,7 @@ import { attributesModule } from './modules/attributes'
 import { listenersModule } from './modules/listeners'
 import { classesModule } from './modules/classes'
 import { isPrimitive, isUndef } from './utils'
-const VNElmMap = new WeakMap()
-const VNInsMap = new WeakMap()
+import { getElm, setVnElm, setVnIns } from './mappings'
 const BUILTINPROPS = ['ref', 'key', 'ns']
 const insertedInsQueue = []
 export function createRef() {
@@ -43,15 +42,9 @@ export function domToVNode(node) {
   }
   return createElement(type, config, children)
 }
-export function mutualMap(map) {
-  return (elm, vnode) => map.set(elm, vnode).set(vnode, elm)
-}
-export const vnodeElmMap = mutualMap(VNElmMap)
-export const vnodeInsMap = mutualMap(VNInsMap)
-
 export function updateProps(vnode, oldVnode) {
   if (typeof vnode.type === 'function') return
-  const elm = VNElmMap.get(vnode)
+  const elm = getElm(vnode)
   if (vnode.type === 'text') {
     if (vnode.children !== oldVnode.children) {
       elm.data = vnode.children
@@ -67,7 +60,7 @@ export function createElm(vnode) {
   let elm
   if (vnode.type === 'text') {
     elm = document.createTextNode(vnode.children)
-    vnodeElmMap(elm, vnode)
+    setVnElm(elm, vnode)
     return elm
   }
   if (typeof vnode.type === 'function') {
@@ -75,21 +68,27 @@ export function createElm(vnode) {
       const ins = new vnode.type(vnode.props)
       const vn = ins.render(createElement)
       vnode.ins = ins
-      vnodeInsMap(ins, vn)
+      setVnIns(ins, vn)
       if (vnode.ref) vnode.ref.current = ins
       elm = createElm(vn)
       insertedInsQueue.push(ins)
+      setVnElm(elm, vn)
+      updateProps(vn)
     } else {
       const vn = vnode.type(createElement, vnode.props)
-      vnodeInsMap(vnode, vn)
+      setVnIns(vnode, vn)
       elm = createElm(vn)
       if (vnode.ref) vnode.ref.current = elm
+      setVnElm(elm, vn)
+      updateProps(vnode)
     }
   } else {
     elm = vnode.ns
       ? document.createElementNS(vnode.ns, vnode.type)
       : document.createElement(vnode.type)
     if (vnode.ref) vnode.ref.current = elm
+    setVnElm(elm, vnode)
+    updateProps(vnode)
   }
   if (vnode.children.length === 1) {
     elm.appendChild(createElm(vnode.children[0]))
@@ -101,8 +100,6 @@ export function createElm(vnode) {
     }
     elm.appendChild(fragment)
   }
-  vnodeElmMap(elm, vnode)
-  updateProps(vnode)
   return elm
 }
 export function createElement(type, config = {}, children = []) {
@@ -123,6 +120,7 @@ export function createElement(type, config = {}, children = []) {
 
 function Element(type, key, ref, props, children) {
   const element = {
+    _isVnode: true,
     type,
     key,
     ref,
@@ -148,4 +146,4 @@ function Element(type, key, ref, props, children) {
   }
   return element
 }
-export { VNElmMap, VNInsMap, insertedInsQueue }
+export { insertedInsQueue }

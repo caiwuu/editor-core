@@ -1,4 +1,5 @@
-import { VNInsMap, createElement as h } from './createElement'
+import { createElement as h } from './createElement'
+import { getVn } from './mappings'
 import { patch } from './patch'
 import enqueueSetState from './enqueueSetState'
 export default class Component {
@@ -13,7 +14,7 @@ export default class Component {
     enqueueSetState(partialState, this)
   }
   _update_() {
-    const oldVn = VNInsMap.get(this)
+    const oldVn = getVn(this)
     const newVn = this.render(h)
     patch(newVn, oldVn)
   }
