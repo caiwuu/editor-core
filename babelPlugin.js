@@ -1,15 +1,33 @@
 const babel = require('@babel/core')
 const t = require('@babel/types')
 const code = `
-function render() {
-  return (
-    <span onClick={this.handleClick}>
-      {this.state.name}
-      <Dialog ref={this.dialogRef}>
-        <div>111</div>
-      </Dialog>
-    </span>
-  )
+export class Content extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      placeholder: (qq) => {
+        return <span style='color:#eee'>placeholder</span>
+      },
+      marks: [
+        // {
+        //   content: 'hello world',
+        //   formts: { bold: true },
+        // },
+      ],
+    }
+  }
+  parser(mark) {
+    return mark.content
+  }
+  render() {
+    return (
+      <div>
+        {this.state.marks.length
+          ? this.state.marks.map((ele) => this.parser(ele))
+          : this.state.placeholder(createElement)}
+      </div>
+    )
+  }
 }
 `
 const visitor = {
@@ -32,7 +50,9 @@ const visitor = {
     if (isConvertable(path, state)) {
       if (
         !path.node.params.length ||
-        (path.node.params.length && path.node.params[0].name !== 'h')
+        (path.node.params.length &&
+          path.node.params[0].name !== 'h' &&
+          path.node.key.name !== 'constructor')
       ) {
         path
           .get('body')

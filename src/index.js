@@ -1,9 +1,9 @@
 import { createElement as h, insertedInsQueue } from './createElement'
 import { patch } from './patch'
-import './componentsDomo/index'
+// import './componentsDomo/index'
 import './style.styl'
 import { Content } from './componentsDomo/content/index'
-function Test() {
+function Test(h) {
   return (
     <div id='editor-root'>
       <Content></Content>

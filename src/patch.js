@@ -5,7 +5,7 @@ import {
   insertedInsQueue,
   domToVNode,
 } from './createElement'
-import { getVn, getElm, setVnElm, setVnIns } from './mappings'
+import { getVn, getElm, setVnElm, setVnIns, delVnElm, delVnIns } from './mappings'
 import { isUndef, isDef } from './utils'
 function sameVnode(vnode, oldVnode) {
   return vnode?.key === oldVnode?.key && vnode?.type === oldVnode?.type
@@ -47,7 +47,13 @@ function invokeDestroyHook(vnode, destoryQueue) {
         }
       }
     }
-    if (ins) destoryQueue.push(ins)
+    // 销毁映射
+    if (ins) {
+      delVnIns(ins)
+      destoryQueue.push(ins)
+    } else {
+      delVnElm(vn)
+    }
   }
 }
 function removeVnodes(parentElm, oldCh, startIdx, endIdx) {

@@ -8,15 +8,23 @@ function getElm(key) {
   return VNElmMap.get(key)
 }
 function setVnElm(vn, elm) {
-  VNElmMap.get(elm) && VNElmMap.delete(VNElmMap.get(elm))
-  VNElmMap.get(vn) && VNElmMap.delete(VNElmMap.get(vn))
+  delVnElm(vn)
   VNElmMap.set(elm, vn).set(vn, elm)
 }
 function setVnIns(vn, ins) {
-  VNInsMap.get(ins) && VNInsMap.delete(VNInsMap.get(ins))
-  VNInsMap.get(vn) && VNInsMap.delete(VNInsMap.get(vn))
+  delVnIns(vn)
   VNInsMap.set(ins, vn).set(vn, ins)
+}
+function delVnElm(key) {
+  const vnOrElm = VNElmMap.get(key)
+  VNElmMap.delete(key)
+  VNElmMap.delete(vnOrElm)
+}
+function delVnIns(key) {
+  const vnOrIns = VNInsMap.get(key)
+  VNInsMap.delete(key)
+  VNInsMap.delete(vnOrIns)
 }
 window.VNElmMap = VNElmMap
 window.VNInsMap = VNInsMap
-export { getVn, getElm, setVnElm, setVnIns }
+export { getVn, getElm, setVnElm, setVnIns, delVnElm, delVnIns }

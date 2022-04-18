@@ -22,7 +22,9 @@ module.exports = function (babel) {
         if (isConvertable(path, state)) {
           if (
             !path.node.params.length ||
-            (path.node.params.length && path.node.params[0].name !== 'h')
+            (path.node.params.length &&
+              path.node.params[0].name !== 'h' &&
+              path.node.key.name !== 'constructor')
           ) {
             path
               .get('body')

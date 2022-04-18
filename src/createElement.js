@@ -2,7 +2,7 @@ import { stylesModule } from './modules/styles'
 import { attributesModule } from './modules/attributes'
 import { listenersModule } from './modules/listeners'
 import { classesModule } from './modules/classes'
-import { isPrimitive, isUndef } from './utils'
+import { isPrimitive, isUndef, toRawType } from './utils'
 import { getElm, setVnElm, setVnIns } from './mappings'
 const BUILTINPROPS = ['ref', 'key', 'ns']
 const insertedInsQueue = []

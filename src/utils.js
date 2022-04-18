@@ -41,3 +41,8 @@ export function debounce(fn, ms = 0) {
     timeoutId = setTimeout(() => fn.apply(this, args), ms)
   }
 }
+const _toString = Object.prototype.toString
+
+export function toRawType(value) {
+  return _toString.call(value).slice(8, -1).toLowerCase()
+}
