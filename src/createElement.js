@@ -149,10 +149,6 @@ function Element(type, key, ref, props, children) {
     element.props.children = [...element.children]
     element.children = []
   }
-  if (Object.freeze) {
-    Object.freeze(element.props)
-    Object.freeze(element.children)
-  }
   return element
 }
 export { insertedInsQueue }
