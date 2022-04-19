@@ -3,6 +3,9 @@ module.exports = function (babel) {
   return {
     inherits: require('@babel/plugin-syntax-jsx').default,
     visitor: {
+      JSXElement(path) {
+        path.replaceWith(converJSX(path))
+      },
       'ClassMethod|FunctionDeclaration'(path, state) {
         const jsxChecker = {
           hasJsx: false,
@@ -19,44 +22,26 @@ module.exports = function (babel) {
         if (!jsxChecker.hasJsx) {
           return
         }
-        if (isConvertable(path, state)) {
-          if (
-            !path.node.params.length ||
-            (path.node.params.length &&
-              path.node.params[0].name !== 'h' &&
-              path.node.key.name !== 'constructor')
-          ) {
-            path
-              .get('body')
-              .unshiftContainer(
-                'body',
-                t.variableDeclaration('const', [
-                  t.variableDeclarator(
-                    t.identifier('h'),
-                    t.memberExpression(t.identifier('arguments'), t.numericLiteral(0), true)
-                  ),
-                ])
-              )
-          }
-          path.traverse({
-            JSXElement(path, state) {
-              path.replaceWith(converJSX(path))
-            },
-          })
+        if (
+          !path.node.params.length ||
+          (path.node.params.length &&
+            path.node.params[0].name !== 'h' &&
+            path.node.key.name !== 'constructor')
+        ) {
+          path
+            .get('body')
+            .unshiftContainer(
+              'body',
+              t.variableDeclaration('const', [
+                t.variableDeclarator(
+                  t.identifier('h'),
+                  t.memberExpression(t.identifier('arguments'), t.numericLiteral(0), true)
+                ),
+              ])
+            )
         }
       },
     },
-  }
-  function isConvertable(path, state) {
-    if (state.opts.scoped) {
-      return (
-        path.node.params.length &&
-        // 在参数最后一个位置写上 __editor__ 来标记这个函数使用该plugin转换，主要为了避免和vue。react等的jsx插件冲突
-        path.node.params[path.node.params.length - 1].name === '__editor__'
-      )
-    } else {
-      return true
-    }
   }
   function convertAttrName(node) {
     if (t.isJSXNamespacedName(node.name)) {

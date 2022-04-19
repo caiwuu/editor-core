@@ -1,23 +1,25 @@
+import { createElement as h } from '../../createElement'
 const defaultFormat = [
   {
     name: 'bold',
-    value: true,
-    render: (mark, value) => {
-      mark.bold = true
+    type: 'node',
+    render: (h, element, value) => {
+      return <strong></strong>
     },
   },
   {
     name: 'font-size',
-    value: true,
-    render: (mark, value) => {
-      mark.bold = true
+    type: 'style',
+    render: (h, element, value) => {
+      return <span style={{ 'font-size': value }}></span>
     },
   },
   {
     name: 'color',
-    value: true,
-    render: (mark, value) => {
-      mark.bold = true
+    type: 'style',
+    render: (h, element, value) => {
+      console.log(value)
+      return <span style={{ color: value }}></span>
     },
   },
 ]
@@ -31,7 +33,13 @@ export default class Formater {
   register(format) {
     this.formatMap.set(format.name, format)
   }
-  get keys() {
+  render(name, value) {
+    return this.formatMap.get(name).render(h, null, value)
+  }
+  get types() {
     return [...this.formatMap.keys()]
+  }
+  getFormats(keys) {
+    return keys.map((key) => this.formatMap.get(key))
   }
 }

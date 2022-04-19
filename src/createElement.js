@@ -119,23 +119,32 @@ export function createElement(type, config = {}, children = []) {
 }
 
 function Element(type, key, ref, props, children) {
-  const element = {
-    _isVnode: true,
-    type,
-    key,
-    ref,
-    props,
-    children: children.map((ele) => {
-      if (isPrimitive(ele) || isUndef(ele)) {
-        return {
-          type: 'text',
-          children: ele,
+  let element
+  if (type === 'text') {
+    element = {
+      type: 'text',
+      children: children.join(''),
+    }
+  } else {
+    element = {
+      _isVnode: true,
+      type,
+      key,
+      ref,
+      props,
+      children: children.map((ele) => {
+        if (isPrimitive(ele) || isUndef(ele)) {
+          return {
+            type: 'text',
+            children: ele,
+          }
+        } else {
+          return ele
         }
-      } else {
-        return ele
-      }
-    }),
+      }),
+    }
   }
+
   if (typeof type === 'function') {
     element.props.children = [...element.children]
     element.children = []
