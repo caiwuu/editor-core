@@ -2,7 +2,7 @@ import { createElement as h } from '../../createElement'
 const defaultFormat = [
   {
     name: 'bold',
-    type: 'node',
+    type: 'inline',
     render: (h, vnode, value) => {
       const vn = <strong></strong>
       if (vnode) {
@@ -13,7 +13,7 @@ const defaultFormat = [
   },
   {
     name: 'underline',
-    type: 'node',
+    type: 'inline',
     render: (h, vnode, value) => {
       const vn = <u></u>
       if (vnode) {
@@ -24,7 +24,7 @@ const defaultFormat = [
   },
   {
     name: 'font-size',
-    type: 'style',
+    type: 'attribute',
     render: (h, vnode, value) => {
       if (vnode) {
         if (!vnode.props.style) vnode.props.style = {}
@@ -36,7 +36,7 @@ const defaultFormat = [
   },
   {
     name: 'color',
-    type: 'style',
+    type: 'attribute',
     render: (h, vnode, value) => {
       if (vnode) {
         console.log(vnode)
@@ -74,38 +74,52 @@ export default class Formater {
   generateVnode(gs, root) {
     return gs.map((g) => {
       if (g.formats.length === 0) {
-        const children = g.children.reduce((prev, mark) => {
-          return prev + mark.content
-        }, '')
-        return h('text', {}, [children])
+        const children = [
+          g.children.reduce((prev, mark) => {
+            return prev + mark.data
+          }, ''),
+        ]
+        return h('text', {}, children)
       } else {
         let pv = null
         let vn = null
-        const styleQueue = []
+        const inlineQueue = []
+        const attributeQueue = []
         const formatQuene = this.getFormats(g.formats)
-        console.log(formatQuene)
         for (let index = 0; index < formatQuene.length; index++) {
           const current = formatQuene[index]
-          // 样式类型的格式放在最后处理
-          if (current.fmt.type === 'style') {
-            styleQueue.push(current)
+          // 属性类型的格式放在最后处理
+          if (current.fmt.type === 'inline') {
+            inlineQueue.push(current)
+            continue
+          }
+          // 属性类型的格式放在最后处理
+          if (current.fmt.type === 'attribute') {
+            attributeQueue.push(current)
             continue
           }
           vn = current.fmt.render(h, vn, current.value)
           if (!pv) pv = vn
         }
-        for (let index = 0; index < styleQueue.length; index++) {
-          const current = styleQueue[index]
+        for (let index = 0; index < inlineQueue.length; index++) {
+          const current = inlineQueue[index]
+          vn = current.fmt.render(h, vn, current.value)
+          if (!pv) pv = vn
+        }
+        for (let index = 0; index < attributeQueue.length; index++) {
+          const current = attributeQueue[index]
           const res = current.fmt.render(h, vn, current.value)
           if (res) pv = vn = res
         }
         if (g.children[0].children) {
           vn.children = this.generateVnode(g.children)
         } else {
-          const children = g.children.reduce((prev, mark) => {
-            return prev + mark.content
-          }, '')
-          vn.children = [h('text', {}, [children])]
+          const children = [
+            g.children.reduce((prev, mark) => {
+              return prev + mark.data
+            }, ''),
+          ]
+          vn.children = [h('text', {}, children)]
         }
         return pv
       }
@@ -124,15 +138,15 @@ export default class Formater {
     })
   }
   get(key) {
-    return this.formatMap.get(key)
+    return this.formatMap.get(key) || {}
   }
   canAdd(mark, prevMark, key) {
     // 当前格式为false
     if (!mark.formats[key]) return false
     // 当前有值，上一个没值
     if (!prevMark.formats[key]) return true
-    // 连续两个组件
-    if (this.get(key).type === 'component') return false
+    // 连续两个块
+    // if (this.get(key).type === 'block') return false
     // 连续两个格式
     if (mark.formats[key] === prevMark.formats[key]) return true
   }
@@ -154,12 +168,17 @@ export default class Formater {
         }
       })
       const maxCounter = Math.max(...Object.values(counter))
-      // 包含组件格式 不嵌套
-      if (
-        prevMark &&
-        Object.keys(prevMark.formats).some((key) => this.get(key).type === 'component')
-      ) {
-        counter = cacheCounter
+      // if (prevMark && maxCounter === 0 && prevMaxCounter === 0) {
+      //   counter = cacheCounter
+      //   break
+      // }
+      // 块格式 不嵌套
+      if (prevMark && Object.keys(mark.formats).some((key) => this.get(key).type === 'block')) {
+        prevMark = null
+        break
+      }
+      if (prevMark && Object.keys(prevMark.formats).some((key) => this.get(key).type === 'block')) {
+        prevMark = null
         break
       }
       // 上一个是纯文本,下一个有格式
@@ -168,10 +187,11 @@ export default class Formater {
         break
       }
       // 上一个和当前比没有格式增长
-      if (prevMark && maxCounter === prevMaxCounter && maxCounter !== 0) {
+      if (prevMark && maxCounter === prevMaxCounter) {
         counter = cacheCounter
         break
       }
+      console.log(index)
       res.children.push(mark)
       res.formats = Object.entries(counter)
         .filter((ele) => ele[1] && ele[1] === maxCounter)
@@ -185,7 +205,9 @@ export default class Formater {
       prevMaxCounter = maxCounter
       prevMark = mark
     }
-    if (res.children.length > 1)
+    //
+    if (res.children.length > 1) {
+      // debugger
       res.children = this.group(
         {
           marks: res.children,
@@ -194,6 +216,7 @@ export default class Formater {
         },
         0
       )
+    }
     r.push(res)
     if (index < group.marks.length) {
       this.group(group, index, r)

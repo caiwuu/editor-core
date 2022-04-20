@@ -4,11 +4,23 @@ import Formater from './formater'
 
 // 注册格式
 const formater = new Formater()
+const paragraph = {
+  name: 'paragraph',
+  type: 'block',
+  render: (h, vnode) => {
+    const vn = <p></p>
+    if (vnode) {
+      vnode.children.push(vn)
+    }
+    return vn
+  },
+}
+
+// 通过标签实现
 const del = {
   name: 'del',
-  type: 'node',
-  // type: 'component',
-  render: (h, vnode, value) => {
+  type: 'inline',
+  render: (h, vnode) => {
     const vn = <del></del>
     if (vnode) {
       vnode.children.push(vn)
@@ -16,11 +28,24 @@ const del = {
     return vn
   },
 }
+
+// 通过css实现
+// const del = {
+//   name: 'del',
+//   type: 'attribute',
+//   render: (h, vnode, value) => {
+//     if (vnode) {
+//       if (!vnode.props.style) vnode.props.style = {}
+//       vnode.props.style['text-decoration'] = 'line-through'
+//     } else {
+//       return <span style='text-decoration:line-through'></span>
+//     }
+//   },
+// }
 const sup = {
   name: 'sup',
-  type: 'node',
-  // type: 'component',
-  render: (h, vnode, value) => {
+  type: 'inline',
+  render: (h, vnode) => {
     const vn = <sup></sup>
     if (vnode) {
       vnode.children.push(vn)
@@ -30,6 +55,7 @@ const sup = {
 }
 formater.register(del)
 formater.register(sup)
+formater.register(paragraph)
 
 export class Content extends Component {
   constructor(props) {
@@ -40,17 +66,25 @@ export class Content extends Component {
       },
       marks: [
         {
-          content: 'hello',
-          formats: { bold: true, del: true, color: 'red', 'font-size': '36px' },
+          data: 'hello',
+          formats: { del: true, color: 'red' },
         },
+        // {
+        //   data: 'paragraph',
+        //   formats: { paragraph: true, del: true, 'font-size': '36px' },
+        // },
         {
-          content: 'world',
+          data: 'world',
           formats: { del: true, color: 'red' },
         },
         {
-          content: 'hhhha',
-          formats: { sup: true, color: 'green', 'font-size': '12px' },
+          data: 'world',
+          formats: { del: true, color: 'red' },
         },
+        // {
+        //   data: 'hhhha',
+        //   formats: { sup: true, del: true, color: 'green', 'font-size': '12px' },
+        // },
       ],
     }
   }
@@ -59,6 +93,7 @@ export class Content extends Component {
     return (
       <div>
         {this.state.marks.length ? formater.render(this.state.marks) : this.state.placeholder(h)}
+        {/* <span>{this.props.children}</span> */}
       </div>
     )
   }

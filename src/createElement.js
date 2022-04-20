@@ -64,6 +64,9 @@ export function createElm(vnode) {
     return elm
   }
   if (typeof vnode.type === 'function') {
+    vnode.props.children = [...vnode.children]
+    vnode.children = []
+    if (Object.freeze) Object.freeze(vnode.props)
     if (vnode.type.isComponent) {
       const ins = new vnode.type(vnode.props)
       const vn = ins.render(createElement)
@@ -145,11 +148,6 @@ function Element(type, key, ref, props, children) {
         }
       }),
     }
-  }
-
-  if (typeof type === 'function') {
-    element.props.children = [...element.children]
-    element.children = []
   }
   return element
 }
