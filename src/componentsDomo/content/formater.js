@@ -67,10 +67,11 @@ export default class Formater {
       },
       0
     )
-    const vn = this.toVnode(gs, root)
+    console.log(gs)
+    const vn = this.generateVnode(gs, root)
     return vn
   }
-  toVnode(gs, root) {
+  generateVnode(gs, root) {
     return gs.map((g) => {
       if (g.formats.length === 0) {
         const children = g.children.reduce((prev, mark) => {
@@ -85,23 +86,21 @@ export default class Formater {
         console.log(formatQuene)
         for (let index = 0; index < formatQuene.length; index++) {
           const current = formatQuene[index]
+          // 样式类型的格式放在最后处理
           if (current.fmt.type === 'style') {
             styleQueue.push(current)
             continue
           }
           vn = current.fmt.render(h, vn, current.value)
-          if (index == 0) pv = vn
+          if (!pv) pv = vn
         }
         for (let index = 0; index < styleQueue.length; index++) {
           const current = styleQueue[index]
-          const res = current.fmt.render(h, pv, current.value)
-          if (res) {
-            vn = res
-            if (!pv) pv = res
-          }
+          const res = current.fmt.render(h, vn, current.value)
+          if (res) pv = vn = res
         }
         if (g.children[0].children) {
-          vn.children = this.toVnode(g.children)
+          vn.children = this.generateVnode(g.children)
         } else {
           const children = g.children.reduce((prev, mark) => {
             return prev + mark.content
@@ -127,6 +126,16 @@ export default class Formater {
   get(key) {
     return this.formatMap.get(key)
   }
+  canAdd(mark, prevMark, key) {
+    // 当前格式为false
+    if (!mark.formats[key]) return false
+    // 当前有值，上一个没值
+    if (!prevMark.formats[key]) return true
+    // 连续两个组件
+    if (this.get(key).type === 'component') return false
+    // 连续两个格式
+    if (mark.formats[key] === prevMark.formats[key]) return true
+  }
   group(group, index, r = []) {
     const res = { formats: [], children: [] }
     let retainkeys = []
@@ -140,18 +149,25 @@ export default class Formater {
         if (!prevMark) {
           counter[key] = 0
           if (mark.formats[key]) counter[key]++
-        } else if (
-          (mark.formats[key] && mark.formats[key] === prevMark.formats[key]) ||
-          (mark.formats[key] && !prevMark.formats[key])
-        ) {
+        } else if (this.canAdd(mark, prevMark, key)) {
           counter[key]++
         }
       })
       const maxCounter = Math.max(...Object.values(counter))
+      // 包含组件格式 不嵌套
+      if (
+        prevMark &&
+        Object.keys(prevMark.formats).some((key) => this.get(key).type === 'component')
+      ) {
+        counter = cacheCounter
+        break
+      }
+      // 上一个是纯文本,下一个有格式
       if (prevMark && prevMaxCounter === 0 && maxCounter > prevMaxCounter) {
         counter = cacheCounter
         break
       }
+      // 上一个和当前比没有格式增长
       if (prevMark && maxCounter === prevMaxCounter && maxCounter !== 0) {
         counter = cacheCounter
         break

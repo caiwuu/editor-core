@@ -122,6 +122,7 @@ function Element(type, key, ref, props, children) {
   let element
   if (type === 'text') {
     element = {
+      _isVnode: true,
       type: 'text',
       children: children.join(''),
     }
@@ -135,6 +136,7 @@ function Element(type, key, ref, props, children) {
       children: children.map((ele) => {
         if (isPrimitive(ele) || isUndef(ele)) {
           return {
+            _isVnode: true,
             type: 'text',
             children: ele,
           }
