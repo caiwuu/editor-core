@@ -6,7 +6,7 @@ import { Content } from './componentsDomo/content/index'
 function Test(h) {
   return (
     <div id='editor-root'>
-      <Content>ch</Content>
+      <Content></Content>
     </div>
   )
 }
