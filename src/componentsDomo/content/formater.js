@@ -141,13 +141,17 @@ export default class Formater {
     return this.formatMap.get(key) || {}
   }
   canAdd(mark, prevMark, key) {
-    // 当前格式为false
+    /**
+     * 当前无格式
+     */
     if (!mark.formats[key]) return false
-    // 当前有值，上一个没值
+    /**
+     * 当前有格式，上一个没格式
+     */
     if (!prevMark.formats[key]) return true
-    // 连续两个块
-    // if (this.get(key).type === 'block') return false
-    // 连续两个格式
+    /**
+     * 当前格式和上一个相同
+     */
     if (mark.formats[key] === prevMark.formats[key]) return true
   }
   group(group, index, r = []) {
@@ -168,11 +172,9 @@ export default class Formater {
         }
       })
       const maxCounter = Math.max(...Object.values(counter))
-      // if (prevMark && maxCounter === 0 && prevMaxCounter === 0) {
-      //   counter = cacheCounter
-      //   break
-      // }
-      // 块格式 不嵌套
+      /**
+       * 块格式 不嵌套
+       */
       if (prevMark && Object.keys(mark.formats).some((key) => this.get(key).type === 'block')) {
         prevMark = null
         break
@@ -181,17 +183,20 @@ export default class Formater {
         prevMark = null
         break
       }
-      // 上一个是纯文本,下一个有格式
+      /**
+       * 上一个是纯文本,下一个有格式
+       */
       if (prevMark && prevMaxCounter === 0 && maxCounter > prevMaxCounter) {
         counter = cacheCounter
         break
       }
-      // 上一个和当前比没有格式增长
-      if (prevMark && maxCounter === prevMaxCounter) {
+      /**
+       * 上一个和当前比没有格式增长
+       */
+      if (prevMark && maxCounter === prevMaxCounter && maxCounter !== 0) {
         counter = cacheCounter
         break
       }
-      console.log(index)
       res.children.push(mark)
       res.formats = Object.entries(counter)
         .filter((ele) => ele[1] && ele[1] === maxCounter)
@@ -205,9 +210,12 @@ export default class Formater {
       prevMaxCounter = maxCounter
       prevMark = mark
     }
-    //
-    if (res.children.length > 1) {
-      // debugger
+    /**
+     * 递归边界
+     * 1.非空格式集长度小于1
+     * 2.空格式集
+     */
+    if (res.formats.length > 0 && res.children.length > 1) {
       res.children = this.group(
         {
           marks: res.children,

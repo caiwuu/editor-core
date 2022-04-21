@@ -8,7 +8,7 @@ const paragraph = {
   name: 'paragraph',
   type: 'block',
   render: (h, vnode) => {
-    const vn = <p></p>
+    const vn = <Paragraph></Paragraph>
     if (vnode) {
       vnode.children.push(vn)
     }
@@ -56,7 +56,28 @@ const sup = {
 formater.register(del)
 formater.register(sup)
 formater.register(paragraph)
-
+class Paragraph extends Component {
+  constructor(props) {
+    super(props)
+    console.log(this.props)
+    this.state = {
+      marks: [
+        {
+          data: 'this is Paragraph',
+          formats: { color: 'green' },
+        },
+      ],
+    }
+  }
+  render() {
+    return (
+      <div>
+        {formater.render(this.state.marks)}
+        {this.props.children}
+      </div>
+    )
+  }
+}
 export class Content extends Component {
   constructor(props) {
     super(props)
@@ -69,22 +90,22 @@ export class Content extends Component {
           data: 'hello',
           formats: { del: true, color: 'red' },
         },
-        // {
-        //   data: 'paragraph',
-        //   formats: { paragraph: true, del: true, 'font-size': '36px' },
-        // },
         {
-          data: 'world',
-          formats: { del: true, color: 'red' },
+          data: 'paragraph',
+          formats: { paragraph: true, del: true, 'font-size': '36px' },
         },
         {
           data: 'world',
           formats: { del: true, color: 'red' },
         },
-        // {
-        //   data: 'hhhha',
-        //   formats: { sup: true, del: true, color: 'green', 'font-size': '12px' },
-        // },
+        {
+          data: 'world',
+          formats: { del: true, color: 'red' },
+        },
+        {
+          data: 'hhhha',
+          formats: { sup: true, del: true, color: 'green', 'font-size': '12px' },
+        },
       ],
     }
   }
