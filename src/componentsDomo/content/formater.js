@@ -62,8 +62,7 @@ export default class Formater {
     const gs = this.group(
       {
         marks: marks,
-        types: this.types,
-        formats: [],
+        restFormats: this.types,
       },
       0
     )
@@ -73,7 +72,7 @@ export default class Formater {
   }
   generateVnode(gs, root) {
     return gs.map((g) => {
-      if (g.formats.length === 0) {
+      if (g.commonFormats.length === 0) {
         const children = [
           g.children.reduce((prev, mark) => {
             return prev + mark.data
@@ -85,7 +84,7 @@ export default class Formater {
         let vn = null
         const inlineQueue = []
         const attributeQueue = []
-        const formatQuene = this.getFormats(g.formats)
+        const formatQuene = this.getFormats(g.commonFormats)
         for (let index = 0; index < formatQuene.length; index++) {
           const current = formatQuene[index]
           // 属性类型的格式放在最后处理
@@ -108,10 +107,10 @@ export default class Formater {
         }
         for (let index = 0; index < attributeQueue.length; index++) {
           const current = attributeQueue[index]
-          const res = current.fmt.render(h, vn, current.value)
-          if (res) pv = vn = res
+          const grouped = current.fmt.render(h, vn, current.value)
+          if (grouped) pv = vn = grouped
         }
-        if (g.children[0].children) {
+        if (g.children[0].commonFormats) {
           vn.children = this.generateVnode(g.children)
         } else {
           const children = [
@@ -155,15 +154,15 @@ export default class Formater {
     if (mark.formats[key] === prevMark.formats[key]) return true
   }
   group(group, index, r = []) {
-    const res = { formats: [], children: [] }
-    let retainkeys = []
+    const grouped = { commonFormats: [], children: [] }
+    let restFormats = []
     let prevMark = null
     let counter = {}
     let prevMaxCounter = 0
     for (index; index < group.marks.length; index++) {
       let cacheCounter = { ...counter }
       const mark = group.marks[index]
-      group.types.forEach((key) => {
+      group.restFormats.forEach((key) => {
         if (!prevMark) {
           counter[key] = 0
           if (mark.formats[key]) counter[key]++
@@ -197,13 +196,13 @@ export default class Formater {
         counter = cacheCounter
         break
       }
-      res.children.push(mark)
-      res.formats = Object.entries(counter)
+      grouped.children.push(mark)
+      grouped.commonFormats = Object.entries(counter)
         .filter((ele) => ele[1] && ele[1] === maxCounter)
         .map((ele) => ({ [ele[0]]: group.marks[index].formats[ele[0]] }))
-      retainkeys = group.types.filter(
+      restFormats = group.restFormats.filter(
         (ele) =>
-          !res.formats.some((i) => {
+          !grouped.commonFormats.some((i) => {
             return i[ele]
           })
       )
@@ -215,17 +214,16 @@ export default class Formater {
      * 1.非空格式集长度小于1
      * 2.空格式集
      */
-    if (res.formats.length > 0 && res.children.length > 1) {
-      res.children = this.group(
+    if (grouped.commonFormats.length > 0 && grouped.children.length > 1) {
+      grouped.children = this.group(
         {
-          marks: res.children,
-          types: retainkeys,
-          formats: [],
+          marks: grouped.children,
+          restFormats,
         },
         0
       )
     }
-    r.push(res)
+    r.push(grouped)
     if (index < group.marks.length) {
       this.group(group, index, r)
     }
