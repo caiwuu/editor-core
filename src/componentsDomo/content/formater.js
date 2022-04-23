@@ -39,7 +39,6 @@ const defaultFormat = [
     type: 'attribute',
     render: (h, vnode, value) => {
       if (vnode) {
-        console.log(vnode)
         if (!vnode.props.style) vnode.props.style = {}
         vnode.props.style['color'] = value
       } else {
@@ -70,8 +69,25 @@ export default class Formater {
     const vn = this.generateVnode(gs, root)
     return vn
   }
+  invokeRender(vn, current) {
+    let flag = false
+    let res = null
+    if (this.get(current.fmt.name).type === 'attribute' && vn?.type?.isComponent) flag = true
+    if (flag) {
+      res = h('span')
+      vn.children.push(res)
+      current.fmt.render(h, res, current.value)
+    } else {
+      res = current.fmt.render(h, vn, current.value)
+    }
+    if (typeof current.value === 'object') {
+      res.props.data = current.value
+    }
+    return res
+  }
   generateVnode(gs, root) {
     return gs.map((g) => {
+      // debugger
       if (g.commonFormats.length === 0) {
         const children = [
           g.children.reduce((prev, mark) => {
@@ -97,18 +113,19 @@ export default class Formater {
             attributeQueue.push(current)
             continue
           }
-          vn = current.fmt.render(h, vn, current.value)
+          vn = this.invokeRender(vn, current)
           if (!pv) pv = vn
         }
         for (let index = 0; index < inlineQueue.length; index++) {
           const current = inlineQueue[index]
-          vn = current.fmt.render(h, vn, current.value)
+          vn = this.invokeRender(vn, current)
           if (!pv) pv = vn
         }
         for (let index = 0; index < attributeQueue.length; index++) {
           const current = attributeQueue[index]
-          const grouped = current.fmt.render(h, vn, current.value)
-          if (grouped) pv = vn = grouped
+          const res = this.invokeRender(vn, current)
+          if (res) vn = res
+          if (!pv) pv = res
         }
         if (g.children[0].commonFormats) {
           vn.children = this.generateVnode(g.children)

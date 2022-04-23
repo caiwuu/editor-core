@@ -28,20 +28,6 @@ const del = {
     return vn
   },
 }
-
-// 通过css实现
-// const del = {
-//   name: 'del',
-//   type: 'attribute',
-//   render: (h, vnode, value) => {
-//     if (vnode) {
-//       if (!vnode.props.style) vnode.props.style = {}
-//       vnode.props.style['text-decoration'] = 'line-through'
-//     } else {
-//       return <span style='text-decoration:line-through'></span>
-//     }
-//   },
-// }
 const sup = {
   name: 'sup',
   type: 'inline',
@@ -53,9 +39,42 @@ const sup = {
     return vn
   },
 }
+const table = {
+  name: 'table',
+  type: 'block',
+  render: (h, vnode) => {
+    const vn = <Table></Table>
+    if (vnode) {
+      vnode.children.push(vn)
+    }
+    return vn
+  },
+}
 formater.register(del)
 formater.register(sup)
 formater.register(paragraph)
+formater.register(table)
+class Table extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { marks: this.props.data.marks, tableSize: this.props.data.tableSize }
+  }
+  render() {
+    return (
+      <table border='1' style='border-collapse:collapse;width:600px'>
+        {this.state.marks.map((ele, rowIdx) => (
+          <tr>
+            {ele.map((i, colIdx) => (
+              <td style='padding:4px;text-align:center'>
+                {formater.render(this.state.marks[rowIdx][colIdx])}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </table>
+    )
+  }
+}
 class Paragraph extends Component {
   constructor(props) {
     super(props)
@@ -91,8 +110,8 @@ export class Content extends Component {
           formats: { del: true, color: 'red' },
         },
         {
-          data: 'paragraph',
-          formats: { paragraph: true, del: true, 'font-size': '36px' },
+          data: '111111',
+          formats: { paragraph: true, color: '#eee', 'font-size': '36px' },
         },
         {
           data: 'world',
@@ -106,6 +125,44 @@ export class Content extends Component {
           data: 'hhhha',
           formats: { sup: true, del: true, color: 'green', 'font-size': '12px' },
         },
+        {
+          data: 'ppppp',
+          formats: {
+            table: {
+              tableSize: { row: 2, col: 2 },
+              marks: [
+                [
+                  [
+                    {
+                      data: 'this is data1',
+                      formats: {},
+                    },
+                  ],
+                  [
+                    {
+                      data: 'this is data2',
+                      formats: { del: true, color: 'red' },
+                    },
+                  ],
+                ],
+                [
+                  [
+                    {
+                      data: 'this is data3',
+                      formats: {},
+                    },
+                  ],
+                  [
+                    {
+                      data: 'this is data4444',
+                      formats: {},
+                    },
+                  ],
+                ],
+              ],
+            },
+          },
+        },
       ],
     }
   }
@@ -114,7 +171,6 @@ export class Content extends Component {
     return (
       <div>
         {this.state.marks.length ? formater.render(this.state.marks) : this.state.placeholder(h)}
-        {/* <span>{this.props.children}</span> */}
       </div>
     )
   }
