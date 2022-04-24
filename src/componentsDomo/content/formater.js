@@ -65,42 +65,49 @@ export default class Formater {
       },
       0
     )
-    console.log(gs)
     const vn = this.generateVnode(gs, root)
     return vn
   }
   invokeRender(vn, current) {
-    let flag = false
-    let res = null
-    if (this.get(current.fmt.name).type === 'attribute' && vn?.type?.isComponent) flag = true
-    if (flag) {
-      res = h('span')
-      vn.children.push(res)
-      current.fmt.render(h, res, current.value)
-    } else {
-      res = current.fmt.render(h, vn, current.value)
-    }
-    if (typeof current.value === 'object') {
-      res.props.data = current.value
-    }
-    return res
+    // console.log(current)
+    // let flag = false
+    // let res = null
+    // if (this.get(current.fmt.name).type === 'attribute' && vn?.type?.isComponent) flag = true
+    // if (flag) {
+    //   res = h('span')
+    //   vn.children.push(res)
+    //   current.fmt.render(h, res, current.value)
+    // } else {
+    //   res = current.fmt.render(h, vn, current.value)
+    // }
+    // if (typeof current.value === 'object') {
+    //   res.props.data = current.value
+    // }
+    return current.fmt.render(h, vn, current.value)
   }
   generateVnode(gs, root) {
     return gs.map((g) => {
-      // debugger
+      let componentQuene
+      const formatQuene = this.getFormats(g.commonFormats)
       if (g.commonFormats.length === 0) {
         const children = [
           g.children.reduce((prev, mark) => {
+            console.log(mark.data)
             return prev + mark.data
           }, ''),
         ]
         return h('text', {}, children)
+      } else if (
+        (componentQuene = formatQuene.filter((ele) => ele.fmt.type === 'component')).length
+      ) {
+        const mark = g.children[0]
+        console.log(mark.data)
+        return componentQuene[0].fmt.render(h, null, mark.data)
       } else {
         let pv = null
         let vn = null
         const inlineQueue = []
         const attributeQueue = []
-        const formatQuene = this.getFormats(g.commonFormats)
         for (let index = 0; index < formatQuene.length; index++) {
           const current = formatQuene[index]
           // 属性类型的格式放在最后处理
@@ -132,6 +139,7 @@ export default class Formater {
         } else {
           const children = [
             g.children.reduce((prev, mark) => {
+              console.log(mark.data)
               return prev + mark.data
             }, ''),
           ]
@@ -191,11 +199,19 @@ export default class Formater {
       /**
        * 块格式 不嵌套
        */
-      if (prevMark && Object.keys(mark.formats).some((key) => this.get(key).type === 'block')) {
+      if (
+        prevMark &&
+        Object.keys(mark.formats).some((key) => ['block', 'component'].includes(this.get(key).type))
+      ) {
         prevMark = null
         break
       }
-      if (prevMark && Object.keys(prevMark.formats).some((key) => this.get(key).type === 'block')) {
+      if (
+        prevMark &&
+        Object.keys(prevMark.formats).some((key) =>
+          ['block', 'component'].includes(this.get(key).type)
+        )
+      ) {
         prevMark = null
         break
       }

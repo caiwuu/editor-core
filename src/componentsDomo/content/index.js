@@ -6,9 +6,9 @@ import Formater from './formater'
 const formater = new Formater()
 const paragraph = {
   name: 'paragraph',
-  type: 'block',
-  render: (h, vnode) => {
-    const vn = <Paragraph></Paragraph>
+  type: 'component',
+  render: (h, vnode, data) => {
+    const vn = <Paragraph data={data}></Paragraph>
     if (vnode) {
       vnode.children.push(vn)
     }
@@ -41,9 +41,9 @@ const sup = {
 }
 const table = {
   name: 'table',
-  type: 'block',
-  render: (h, vnode) => {
-    const vn = <Table></Table>
+  type: 'component',
+  render: (h, vnode, data) => {
+    const vn = <Table data={data}></Table>
     if (vnode) {
       vnode.children.push(vn)
     }
@@ -80,21 +80,11 @@ class Paragraph extends Component {
     super(props)
     console.log(this.props)
     this.state = {
-      marks: [
-        {
-          data: 'this is Paragraph',
-          formats: { color: 'green' },
-        },
-      ],
+      marks: this.props.data.marks,
     }
   }
   render() {
-    return (
-      <div>
-        {formater.render(this.state.marks)}
-        {this.props.children}
-      </div>
-    )
+    return <div>{formater.render(this.state.marks)}</div>
   }
 }
 export class Content extends Component {
@@ -104,31 +94,33 @@ export class Content extends Component {
       placeholder: (h) => {
         return <span style='color:#ddd'>placeholder</span>
       },
-      marks: [
-        {
-          data: 'hello',
-          formats: { del: true, color: 'red' },
-        },
-        {
-          data: '111111',
-          formats: { paragraph: true, color: '#eee', 'font-size': '36px' },
-        },
-        {
-          data: 'world',
-          formats: { del: true, color: 'red' },
-        },
-        {
-          data: 'world',
-          formats: { del: true, color: 'red' },
-        },
-        {
-          data: 'hhhha',
-          formats: { sup: true, del: true, color: 'green', 'font-size': '12px' },
-        },
-        {
-          data: 'ppppp',
-          formats: {
-            table: {
+      data: {
+        marks: [
+          {
+            data: 'hello',
+            formats: { del: true, color: 'red' },
+          },
+          {
+            data: {
+              marks: [
+                {
+                  data: 'this is Paragraph',
+                  formats: { color: 'green' },
+                },
+              ],
+            },
+            formats: { paragraph: true },
+          },
+          {
+            data: 'world',
+            formats: { del: true, color: 'red' },
+          },
+          {
+            data: 'hhhha',
+            formats: { sup: true, del: true, color: 'green', 'font-size': '12px' },
+          },
+          {
+            data: {
               tableSize: { row: 2, col: 2 },
               marks: [
                 [
@@ -161,16 +153,21 @@ export class Content extends Component {
                 ],
               ],
             },
+            formats: {
+              table: true,
+            },
           },
-        },
-      ],
+        ],
+      },
     }
   }
 
   render() {
     return (
       <div>
-        {this.state.marks.length ? formater.render(this.state.marks) : this.state.placeholder(h)}
+        {this.state.data.marks.length
+          ? formater.render(this.state.data.marks)
+          : this.state.placeholder(h)}
       </div>
     )
   }

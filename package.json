@@ -32,6 +32,6 @@
     "webpackbar": "^5.0.0-3"
   },
   "dependencies": {
-    "js-schema": "^1.0.1"
+    "js-data": "^3.0.11"
   }
 }
