@@ -1,6 +1,5 @@
-import { createRef } from '../../createElement'
-import Component from '../../component'
-import { throttle, isDef } from '../../utils'
+import { createRef, Component } from '@/model'
+import { throttle, isDef } from '@/utils'
 import { toRGBArray, HSLToRGB, RGBToHSL, coordinatesToRgb } from './utils'
 function pauseEvent(e) {
   if (e.stopPropagation) e.stopPropagation()

@@ -1,6 +1,6 @@
 import { createElement as h } from './createElement'
 import { getVn } from './mappings'
-import { patch } from './patch'
+import patch from './patch'
 import enqueueSetState from './enqueueSetState'
 export default class Component {
   static isComponent = true

@@ -1,12 +1,7 @@
-import {
-  createElm,
-  updateProps,
-  createElement as h,
-  insertedInsQueue,
-  domToVNode,
-} from './createElement'
+import { createElm, createElement as h, insertedInsQueue, domToVNode } from './createElement'
+import { updateProps } from './common'
 import { getVn, getElm, setVnElm, setVnIns, delVnElm, delVnIns } from './mappings'
-import { isUndef, isDef } from './utils'
+import { isUndef, isDef } from '../utils'
 function sameVnode(vnode, oldVnode) {
   return vnode?.key === oldVnode?.key && vnode?.type === oldVnode?.type
 }
@@ -70,7 +65,7 @@ function removeVnodes(parentElm, oldCh, startIdx, endIdx) {
     }
   }
 }
-export function updateChildren(parentElm, newCh, oldCh) {
+function updateChildren(parentElm, newCh, oldCh) {
   let oldStartIdx = 0
   let newStartIdx = 0
   let oldEndIdx = oldCh.length - 1
@@ -181,7 +176,7 @@ function patchVnode(vnode, oldVnode) {
     if (oldCh !== ch) updateChildren(elm, ch, oldCh)
   }
 }
-export function patch(vnode, oldVnode) {
+export default function patch(vnode, oldVnode) {
   insertedInsQueue.length = 0
   // 没有oldvnode 直接创建新dom
   if (isUndef(oldVnode)) {

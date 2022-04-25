@@ -1,7 +1,6 @@
 import Palette from './palette'
 import Hue from './hue'
-import Component from '../../component'
-import { createRef } from '../../createElement'
+import { createRef, Component } from '@/model'
 export default class ColorPicker extends Component {
   constructor(props) {
     super(props)

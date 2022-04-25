@@ -1,5 +1,4 @@
-import { patch } from '../patch'
-import { createElement as h } from '../createElement'
+import { createElement as h, patch } from '@/model'
 import ColorPicker from './colorPicker'
 patch(test(h), document.getElementById('components-test'))
 

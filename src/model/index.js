@@ -1,0 +1,7 @@
+export { default as Content } from './content/content'
+export { default as Formater } from './content/formater'
+export { default as Component } from './component'
+export { getVn, getElm, setVnElm, setVnIns, delVnElm, delVnIns } from './mappings'
+export { createElement } from './createElement'
+export { createRef } from './common'
+export { default as patch } from './patch'

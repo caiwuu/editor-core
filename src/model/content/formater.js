@@ -1,56 +1,10 @@
-import { createElement as h } from '../../createElement'
-const defaultFormat = [
-  {
-    name: 'bold',
-    type: 'inline',
-    render: (h, vnode, value) => {
-      const vn = <strong></strong>
-      if (vnode) {
-        vnode.children.push(vn)
-      }
-      return vn
-    },
-  },
-  {
-    name: 'underline',
-    type: 'inline',
-    render: (h, vnode, value) => {
-      const vn = <u></u>
-      if (vnode) {
-        vnode.children.push(vn)
-      }
-      return vn
-    },
-  },
-  {
-    name: 'font-size',
-    type: 'attribute',
-    render: (h, vnode, value) => {
-      if (vnode) {
-        if (!vnode.props.style) vnode.props.style = {}
-        vnode.props.style['font-size'] = value
-      } else {
-        return <span style={{ 'font-size': value }}></span>
-      }
-    },
-  },
-  {
-    name: 'color',
-    type: 'attribute',
-    render: (h, vnode, value) => {
-      if (vnode) {
-        if (!vnode.props.style) vnode.props.style = {}
-        vnode.props.style['color'] = value
-      } else {
-        return <span style={{ color: value }}></span>
-      }
-    },
-  },
-]
+import { createElement as h } from '../createElement'
+import defaultFormats from './defaultFormats'
+
 export default class Formater {
   formatMap = new Map()
   constructor() {
-    defaultFormat.forEach((format) => {
+    defaultFormats.forEach((format) => {
       this.register(format)
     })
   }
@@ -69,20 +23,6 @@ export default class Formater {
     return vn
   }
   invokeRender(vn, current) {
-    // console.log(current)
-    // let flag = false
-    // let res = null
-    // if (this.get(current.fmt.name).type === 'attribute' && vn?.type?.isComponent) flag = true
-    // if (flag) {
-    //   res = h('span')
-    //   vn.children.push(res)
-    //   current.fmt.render(h, res, current.value)
-    // } else {
-    //   res = current.fmt.render(h, vn, current.value)
-    // }
-    // if (typeof current.value === 'object') {
-    //   res.props.data = current.value
-    // }
     return current.fmt.render(h, vn, current.value)
   }
   generateVnode(gs, root) {
@@ -101,7 +41,6 @@ export default class Formater {
         (componentQuene = formatQuene.filter((ele) => ele.fmt.type === 'component')).length
       ) {
         const mark = g.children[0]
-        console.log(mark.data)
         return componentQuene[0].fmt.render(h, null, mark.data)
       } else {
         let pv = null

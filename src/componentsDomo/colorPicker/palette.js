@@ -1,5 +1,4 @@
-import { createRef } from '../../createElement'
-import Component from '../../component'
+import { createRef, Component } from '@/model'
 import { throttle, isDef } from '../../utils'
 import { rgbToCoordinates, coordinatesToRgb } from './utils'
 function pauseEvent(e) {
