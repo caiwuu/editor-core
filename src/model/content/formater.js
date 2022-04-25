@@ -3,15 +3,16 @@ import defaultFormats from './defaultFormats'
 
 export default class Formater {
   formatMap = new Map()
-  constructor() {
+  constructor(VNMarkMap) {
+    this.VNMarkMap = VNMarkMap
     defaultFormats.forEach((format) => {
       this.register(format)
     })
   }
-  register(format) {
+  register (format) {
     this.formatMap.set(format.name, format)
   }
-  render(marks, root = null) {
+  render (marks, root = null) {
     const gs = this.group(
       {
         marks: marks,
@@ -22,21 +23,25 @@ export default class Formater {
     const vn = this.generateVnode(gs, root)
     return vn
   }
-  invokeRender(vn, current) {
+  invokeRender (vn, current) {
     return current.fmt.render(h, vn, current.value)
   }
-  generateVnode(gs, root) {
+  generateVnode (gs, root) {
     return gs.map((g) => {
       let componentQuene
       const formatQuene = this.getFormats(g.commonFormats)
       if (g.commonFormats.length === 0) {
+        const markList = []
         const children = [
           g.children.reduce((prev, mark) => {
-            console.log(mark.data)
+            // console.log(mark.data)
+            markList.push(mark)
             return prev + mark.data
           }, ''),
         ]
-        return h('text', {}, children)
+        const text = h('text', {}, children)
+        this.VNMarkMap.set(text, markList)
+        return text
       } else if (
         (componentQuene = formatQuene.filter((ele) => ele.fmt.type === 'component')).length
       ) {
@@ -76,22 +81,26 @@ export default class Formater {
         if (g.children[0].commonFormats) {
           vn.children = this.generateVnode(g.children)
         } else {
+          const markList = []
           const children = [
             g.children.reduce((prev, mark) => {
-              console.log(mark.data)
+              // console.log(mark.data)
+              markList.push(mark)
               return prev + mark.data
             }, ''),
           ]
-          vn.children = [h('text', {}, children)]
+          const text = h('text', {}, children)
+          this.VNMarkMap.set(text, markList)
+          vn.children = [text]
         }
         return pv
       }
     })
   }
-  get types() {
+  get types () {
     return [...this.formatMap.keys()]
   }
-  getFormats(objs) {
+  getFormats (objs) {
     return objs.map((obj) => {
       const key = Object.keys(obj)[0]
       return {
@@ -100,10 +109,10 @@ export default class Formater {
       }
     })
   }
-  get(key) {
+  get (key) {
     return this.formatMap.get(key) || {}
   }
-  canAdd(mark, prevMark, key) {
+  canAdd (mark, prevMark, key) {
     /**
      * 当前无格式
      */
@@ -117,7 +126,7 @@ export default class Formater {
      */
     if (mark.formats[key] === prevMark.formats[key]) return true
   }
-  group(group, index, r = []) {
+  group (group, index, r = []) {
     const grouped = { commonFormats: [], children: [] }
     let restFormats = []
     let prevMark = null
