@@ -4,8 +4,8 @@ export default class Content extends Component {
     super(props)
     this.initState()
   }
-  initState () {
-    this.props.data.ins = this
+  initState() {
+    this.props.data.component = this
     let { position, marks } = this.props.data
     if (position === undefined) {
       this.props.data.position = position = '0'

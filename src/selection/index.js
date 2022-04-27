@@ -1,7 +1,7 @@
 const nativeSelection = document.getSelection()
 import Range from './range'
 export default class Selection {
-  ranges = [] // 选区列表
+  ranges = []
   constructor(editor) {
     this.editor = editor
   }
@@ -13,13 +13,13 @@ export default class Selection {
     this.ranges.forEach((range) => {
       points.push(
         {
-          container: range.startVNode,
+          container: range.startContainer,
           offset: range.startOffset,
           range,
           flag: 'start',
         },
         {
-          container: range.endVNode,
+          container: range.endContainer,
           offset: range.endOffset,
           range,
           flag: 'end',
@@ -46,7 +46,7 @@ export default class Selection {
     const cloneRange = new Range(nativeRange, this.editor)
     if (cloneRange.collapsed) {
       cloneRange._d = 0
-    } else if (focusNode === cloneRange.endVNode.elm && focusOffset === cloneRange.endOffset) {
+    } else if (focusNode === cloneRange.endContainer && focusOffset === cloneRange.endOffset) {
       cloneRange._d = 2
     } else {
       cloneRange._d = 1
@@ -85,7 +85,7 @@ export default class Selection {
       let flag = false
       this.ranges.forEach((i) => {
         if (
-          i.endVNode.elm === nativeRange.endContainer &&
+          i.endContainer === nativeRange.endContainer &&
           i.startOffset === nativeRange.startOffset
         ) {
           flag = true
@@ -96,10 +96,10 @@ export default class Selection {
       this.pushRange(nativeRange)
     }
   }
-  createNativeRange({ startVNode, startOffset, endVNode, endOffset }) {
+  createNativeRange({ startContainer, startOffset, endContainer, endOffset }) {
     const range = document.createRange()
-    range.setStart(startVNode.elm, startOffset)
-    range.setEnd(endVNode.elm, endOffset)
+    range.setStart(startContainer, startOffset)
+    range.setEnd(endContainer, endOffset)
     return range
   }
   updateRanges(multiple) {
@@ -125,7 +125,7 @@ export default class Selection {
     let len = this.ranges.length
     for (let index = 0; index < len; index++) {
       const range = this.ranges[index]
-      const key = range.startVNode.position + range.caret.rect.x + range.caret.rect.y
+      const key = range.startContainer.position + range.caret.rect.x + range.caret.rect.y
       if (!tempObj[key]) {
         // 这里解决当两个光标在同一行又不在同一个节点上却又重合的情况，通常在跨行内节点会出现，这时应该当作重复光标去重
         const covereds = Object.entries(tempObj).filter(

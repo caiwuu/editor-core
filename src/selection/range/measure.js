@@ -1,4 +1,8 @@
-import { multiplication } from '../../share/utils'
+function multiplication(str, times) {
+  return str.replace(/(\d*).*/, function ($0, $1) {
+    return $1 * times
+  })
+}
 export default class Measure {
   dom = null
   instance = null
@@ -47,8 +51,6 @@ export default class Measure {
       } else {
         container.data += temp.data
         temp.remove()
-        // container.parentNode.vnode.normalize()
-        // container.parentNode.normalize()
       }
     }
     return rect

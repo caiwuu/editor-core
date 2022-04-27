@@ -27,11 +27,11 @@ export default class Caret {
     switch (range._d) {
       case 0:
       case 1:
-        container = range.startVNode.elm
+        container = range.startContainer
         offset = range.startOffset
         break
       case 2:
-        container = range.endVNode.elm
+        container = range.endContainer
         offset = range.endOffset
         break
     }
@@ -41,7 +41,7 @@ export default class Caret {
     this.rect = this.getRect(range)
     if (!drawCaret) return
     range.editor.ui.body.elm.appendChild(this.dom)
-    let container = range.startVNode.elm
+    let container = range.startContainer
     if (!container) return
     if (!(container instanceof Element)) {
       container = container.parentNode
