@@ -13,7 +13,10 @@ export default class Formater {
   register(format) {
     this.formatMap.set(format.name, format)
   }
-  render(marks, root = null) {
+  render(marks,placeholder) {
+    if(placeholder){
+      return h('br')
+    }
     const gs = this.group(
       {
         marks: marks,
@@ -21,13 +24,13 @@ export default class Formater {
       },
       0
     )
-    const vn = this.generateVnode(gs, root)
+    const vn = this.generateVnode(gs)
     return vn
   }
   invokeRender(vn, current) {
     return current.fmt.render(h, vn, current.value)
   }
-  generateVnode(gs, root) {
+  generateVnode(gs) {
     return gs.map((g) => {
       let componentQuene
       const formatQuene = this.getFormats(g.commonFormats)

@@ -56,8 +56,8 @@ function removeVnodes(parentElm, oldCh, startIdx, endIdx) {
     const vnode = oldCh[startIdx]
     if (vnode != null) {
       let destoryQueue = []
-      invokeDestroyHook(vnode, destoryQueue)
       parentElm.removeChild(getElm(vnode))
+      invokeDestroyHook(vnode, destoryQueue)
       destoryQueue.forEach((ins) => {
         ins.onUnmounted?.()
       })

@@ -84,7 +84,13 @@ class Row extends Content {
 }
 class Col extends Content {
   render() {
-    return <td style='text-align:center;width:50%'>{formater.render(this.state.marks)}</td>
+    console.log(this.contentLength);
+    return <td style='text-align:center;width:50%'>{formater.render(this.state.marks,!this.contentLength)}</td>
+  }
+  get contentLength(){
+    return this.state.marks.filter(ele=>typeof ele.data==='string').reduce((prev,curr)=>{
+      return prev+curr.data.length
+    },0)
   }
 }
 class Paragraph extends Content {
