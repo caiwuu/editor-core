@@ -6,18 +6,8 @@ export default class Content extends Component {
   }
   initState() {
     this.props.data.component = this
-    let { position, marks } = this.props.data
-    if (position === undefined) {
-      this.props.data.position = position = '0'
-    }
-    if (marks) {
+    if (this.props.data) {
       this.state = { marks: this.props.data.marks }
-      marks.forEach((ele, index) => {
-        ele.position = position + '-' + index
-        if (typeof ele.data === 'object') {
-          ele.data.position = ele.position
-        }
-      })
     }
   }
 }

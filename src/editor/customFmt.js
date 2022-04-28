@@ -1,4 +1,4 @@
-import { createElement as h, Formater, Content } from '@/model/index'
+import { createElement as h, Formater, Content } from '@/model'
 export const formater = new Formater()
 const paragraph = {
   name: 'paragraph',
@@ -84,7 +84,7 @@ class Row extends Content {
 }
 class Col extends Content {
   render() {
-    return <td style='text-align:center'>{formater.render(this.state.marks)}</td>
+    return <td style='text-align:center;width:50%'>{formater.render(this.state.marks)}</td>
   }
 }
 class Paragraph extends Content {

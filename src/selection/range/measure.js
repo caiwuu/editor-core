@@ -1,8 +1,4 @@
-function multiplication(str, times) {
-  return str.replace(/(\d*).*/, function ($0, $1) {
-    return $1 * times
-  })
-}
+import { multiplication } from '@/utils'
 export default class Measure {
   dom = null
   instance = null
@@ -35,15 +31,23 @@ export default class Measure {
     }
     return this._getRect(container, offset, temp)
   }
+  computeOffset(dom, res = { x: 0, y: 0, h: null }) {
+    res.h = res.h ?? dom.offsetHeight
+    res.x += dom.offsetLeft
+    res.y += dom.offsetTop
+    if (dom.offsetParent && dom.offsetParent.tagName !== 'BODY') {
+      return this.computeOffset(dom.offsetParent, res)
+    }
+    return res
+  }
   _getRect(container, offset, temp) {
     let con = container
     if (!(container instanceof Element)) {
       con = container.parentNode
     }
-    const copyStyle = getComputedStyle(con),
-      ch = multiplication(copyStyle.fontSize, 1.3) / 1,
-      { offsetLeft: x, offsetTop: y, offsetHeight: h } = this.dom,
-      rect = { x, y, h, ch }
+    const copyStyle = getComputedStyle(con)
+    const ch = multiplication(copyStyle.fontSize, 1.3) / 1
+    const rect = { ...this.computeOffset(this.dom), ch }
     this.dom.remove()
     if (container.nodeName === '#text' && offset) {
       if (!container.data && container.nextSibling) {

@@ -46,3 +46,20 @@ const _toString = Object.prototype.toString
 export function toRawType(value) {
   return _toString.call(value).slice(8, -1).toLowerCase()
 }
+export function times(n, fn, context = undefined, ...args) {
+  let i = 0
+  while (i++ < n) {
+    fn.call(context, ...args)
+  }
+}
+
+export function setStyle(dom, style) {
+  for (const key in style) {
+    dom.style[key] = style[key]
+  }
+}
+export function multiplication(str, times) {
+  return str.replace(/(\d*).*/, function ($0, $1) {
+    return $1 * times
+  })
+}
