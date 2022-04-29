@@ -1,6 +1,6 @@
 import { createElement as h } from '../createElement'
 import defaultFormats from './defaultFormats'
-import { setMark } from '../mappings'
+import { setMark, setMarkVN } from '../mappings'
 
 export default class Formater {
   formatMap = new Map()
@@ -13,10 +13,7 @@ export default class Formater {
   register(format) {
     this.formatMap.set(format.name, format)
   }
-  render(marks,placeholder) {
-    if(placeholder){
-      return h('br')
-    }
+  render(marks) {
     const gs = this.group(
       {
         marks: marks,
@@ -44,6 +41,9 @@ export default class Formater {
           }, ''),
         ]
         const text = h('text', {}, children)
+        markList.forEach((mark) => {
+          setMarkVN(mark, text)
+        })
         setMark(text, markList)
         return text
       } else if (
@@ -94,6 +94,9 @@ export default class Formater {
             }, ''),
           ]
           const text = h('text', {}, children)
+          markList.forEach((mark) => {
+            setMarkVN(mark, text)
+          })
           setMark(text, markList)
           vn.children = [text]
         }

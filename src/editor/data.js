@@ -3,21 +3,17 @@ export const mark = {
     marks: [
       {
         data: 'hello',
-        position: '0-0',
         formats: { del: true, color: 'red' },
       },
       {
         data: {
-          position: '1',
           marks: [
             {
               data: 'this is Paragraph',
-              position: '1-0',
               formats: { color: 'green' },
             },
           ],
         },
-        position: '1',
         formats: { paragraph: true },
       },
       {

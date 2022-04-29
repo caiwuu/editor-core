@@ -10,4 +10,8 @@ export default class Content extends Component {
       this.state = { marks: this.props.data.marks }
     }
   }
+  updateState(editor, path) {
+    this.beforeUpdateState && this.beforeUpdateState(editor, path)
+    this._update_()
+  }
 }

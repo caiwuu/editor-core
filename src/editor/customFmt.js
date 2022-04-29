@@ -1,4 +1,4 @@
-import { createElement as h, Formater, Content } from '@/model'
+import { createElement as h, Formater, Content, createRef } from '@/model'
 export const formater = new Formater()
 const paragraph = {
   name: 'paragraph',
@@ -83,14 +83,33 @@ class Row extends Content {
   }
 }
 class Col extends Content {
-  render() {
-    console.log(this.contentLength);
-    return <td style='text-align:center;width:50%'>{formater.render(this.state.marks,!this.contentLength)}</td>
+  constructor(props) {
+    super(props)
+    this.state.elmRef = createRef()
   }
-  get contentLength(){
-    return this.state.marks.filter(ele=>typeof ele.data==='string').reduce((prev,curr)=>{
-      return prev+curr.data.length
-    },0)
+  render() {
+    console.log(this.contentLength)
+    return (
+      <td ref={this.state.elmRef} style='text-align:center;width:50%'>
+        {this.contentLength ? formater.render(this.state.marks) : <br />}
+      </td>
+    )
+  }
+  get contentLength() {
+    return this.state.marks
+      .filter((ele) => typeof ele.data === 'string')
+      .reduce((prev, curr) => {
+        return prev + curr.data.length
+      }, 0)
+  }
+  beforeUpdateState(editor, path) {
+    const range = editor.selection.getRangeAt(0)
+    if (!this.contentLength) {
+      console.log(this.state.marks)
+      // console.log(path)
+      range.setStart(this.state.elmRef.current, 0)
+      range.collapse(true)
+    }
   }
 }
 class Paragraph extends Content {

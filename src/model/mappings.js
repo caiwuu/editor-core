@@ -1,6 +1,10 @@
 const VNElmMap = new WeakMap()
 const VNInsMap = new WeakMap()
 const VNMarkMap = new WeakMap()
+const markVNMap = new WeakMap()
+function setMarkVN(mark, vn) {
+  markVNMap.set(mark, vn)
+}
 function setMark(vn, marks) {
   VNMarkMap.set(vn, marks)
 }
@@ -9,7 +13,7 @@ function getMark(vn) {
 }
 function getVn(key) {
   if (key.nodeType) return VNElmMap.get(key)
-  return VNInsMap.get(key)
+  return VNInsMap.get(key) || markVNMap.get(key)
 }
 function getElm(key) {
   return VNElmMap.get(key)
@@ -36,4 +40,4 @@ function delVnIns(key) {
 }
 window.VNElmMap = VNElmMap
 window.VNInsMap = VNInsMap
-export { getVn, getElm, setVnElm, setVnIns, delVnElm, delVnIns, setMark, getMark }
+export { getVn, getElm, setVnElm, setVnIns, delVnElm, delVnIns, setMark, getMark, setMarkVN }
