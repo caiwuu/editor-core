@@ -22,7 +22,7 @@ customFmt.forEach((ele) => {
 class Root extends Content {
   render() {
     return (
-      <div>
+      <div id='editor-content'>
         {this.state.marks.length ? formater.render(this.state.marks) : this.state.placeholder(h)}
       </div>
     )

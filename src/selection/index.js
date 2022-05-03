@@ -116,8 +116,8 @@ export default class Selection {
   }
   _isCoverd(rectA, rectB) {
     return rectA.y < rectB.y
-      ? rectA.y + rectA.ch >= rectB.y + rectB.ch
-      : rectB.y + rectB.ch >= rectA.y + rectA.ch
+      ? rectA.y + rectA.h >= rectB.y + rectB.h
+      : rectB.y + rectB.h >= rectA.y + rectA.h
   }
   // 高性能去重;
   distinct() {

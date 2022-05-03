@@ -46,8 +46,8 @@ export default class Measure {
       con = container.parentNode
     }
     const copyStyle = getComputedStyle(con)
-    const ch = multiplication(copyStyle.fontSize, 1.3) / 1
-    const rect = { ...this.computeOffset(this.dom), ch }
+    const h = multiplication(copyStyle.fontSize, 1.3) / 1
+    const rect = { ...this.computeOffset(this.dom), h }
     this.dom.remove()
     if (container.nodeName === '#text' && offset) {
       if (!container.data && container.nextSibling) {
