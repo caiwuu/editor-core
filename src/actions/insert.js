@@ -12,7 +12,7 @@ export default function insert([{ node, pos, R }, data]) {
   } else {
     const vn = getVn(node)
     const component = vn.ins
-    const path = queryPath(vn.ins.state.marks[0], this.path)
+    const path = queryPath(component.state.marks[0], this.path)
     path.node.data = path.node.data.slice(0, pos) + data + path.node.data.slice(pos)
     component.updateState(this, path)
     const elm = getElm(getVn(path.node))

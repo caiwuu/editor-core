@@ -2,7 +2,7 @@ import { stylesModule } from './modules/styles'
 import { attributesModule } from './modules/attributes'
 import { listenersModule } from './modules/listeners'
 import { classesModule } from './modules/classes'
-import { getElm } from './mappings'
+import { getElm, getVn, getMark } from './mappings'
 export function updateProps(vnode, oldVnode) {
   if (typeof vnode.type === 'function') return
   const elm = getElm(vnode)
@@ -78,9 +78,34 @@ export function createPath(current, parent = null, prev = null, next = null, ind
   }
   return path
 }
-export function queryPath(position, path) {
-  if (!position) return
-  position = position.position || position
+export function queryPath(target, path, offset = 0) {
+  let position
+  if (!target) return
+  // 通过elm查询
+  if (target.nodeType) {
+    const vn = getVn(target)
+    const marks = getMark(vn)
+    if (!marks) return
+    if (vn.type === 'text') {
+      let index = 0
+      let count = 0
+      for (index; index < marks.length; index++) {
+        const mark = marks[index]
+        const newCount = count + mark.data.length
+        if (count <= offset && offset <= newCount) {
+          break
+        } else {
+          count = newCount
+        }
+      }
+      position = marks[index].position
+    } else {
+      position = marks[0].position
+    }
+  } else {
+    // 通过mark或者position查询
+    position = target.position || target
+  }
   const posArr = position.split('-')
   return posArr.slice(1).reduce((prev, index) => {
     return prev.children[index]
