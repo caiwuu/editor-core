@@ -12,7 +12,52 @@ const paragraph = {
   },
 }
 
-// 通过标签实现
+const bold = {
+  name: 'bold',
+  type: 'inline',
+  render: (h, vnode, value) => {
+    const vn = <strong></strong>
+    if (vnode) {
+      vnode.children.push(vn)
+    }
+    return vn
+  },
+}
+const underline = {
+  name: 'underline',
+  type: 'inline',
+  render: (h, vnode, value) => {
+    const vn = <u></u>
+    if (vnode) {
+      vnode.children.push(vn)
+    }
+    return vn
+  },
+}
+const fontSize = {
+  name: 'font-size',
+  type: 'attribute',
+  render: (h, vnode, value) => {
+    if (vnode) {
+      if (!vnode.props.style) vnode.props.style = {}
+      vnode.props.style['font-size'] = value
+    } else {
+      return <span style={{ 'font-size': value }}></span>
+    }
+  },
+}
+const color = {
+  name: 'color',
+  type: 'attribute',
+  render: (h, vnode, value) => {
+    if (vnode) {
+      if (!vnode.props.style) vnode.props.style = {}
+      vnode.props.style['color'] = value
+    } else {
+      return <span style={{ color: value }}></span>
+    }
+  },
+}
 const del = {
   name: 'del',
   type: 'inline',
@@ -88,7 +133,6 @@ class Col extends Content {
     this.state.elmRef = createRef()
   }
   render() {
-    console.log(this.contentLength)
     return (
       <td ref={this.state.elmRef} style='text-align:center;width:50%'>
         {this.contentLength ? formater.render(this.state.marks) : <br />}
@@ -118,4 +162,4 @@ class Paragraph extends Content {
   }
 }
 
-export const customFmt = [paragraph, del, sup, table, row, col]
+export const formats = [bold, underline, fontSize, color, paragraph, del, sup, table, row, col]

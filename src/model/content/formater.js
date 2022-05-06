@@ -1,14 +1,10 @@
 import { createElement as h } from '../createElement'
-import defaultFormats from './defaultFormats'
 import { setMark, setMarkVN } from '../mappings'
 
 export default class Formater {
   formatMap = new Map()
   constructor(VNMarkMap) {
     this.VNMarkMap = VNMarkMap
-    defaultFormats.forEach((format) => {
-      this.register(format)
-    })
   }
   register(format) {
     this.formatMap.set(format.name, format)
@@ -54,15 +50,15 @@ export default class Formater {
       } else {
         let pv = null
         let vn = null
-        const inlineQueue = []
+        // const inlineQueue = []
         const attributeQueue = []
         for (let index = 0; index < formatQuene.length; index++) {
           const current = formatQuene[index]
-          // 属性类型的格式放在最后处理
-          if (current.fmt.type === 'inline') {
-            inlineQueue.push(current)
-            continue
-          }
+          // // 属性类型的格式放在最后处理
+          // if (current.fmt.type === 'inline') {
+          //   inlineQueue.push(current)
+          //   continue
+          // }
           // 属性类型的格式放在最后处理
           if (current.fmt.type === 'attribute') {
             attributeQueue.push(current)
@@ -71,11 +67,11 @@ export default class Formater {
           vn = this.invokeRender(vn, current)
           if (!pv) pv = vn
         }
-        for (let index = 0; index < inlineQueue.length; index++) {
-          const current = inlineQueue[index]
-          vn = this.invokeRender(vn, current)
-          if (!pv) pv = vn
-        }
+        // for (let index = 0; index < inlineQueue.length; index++) {
+        //   const current = inlineQueue[index]
+        //   vn = this.invokeRender(vn, current)
+        //   if (!pv) pv = vn
+        // }
         for (let index = 0; index < attributeQueue.length; index++) {
           const current = attributeQueue[index]
           const res = this.invokeRender(vn, current)

@@ -4,6 +4,7 @@ export default function del([{ node, pos }, to]) {
   if (marks) {
     const R = this.selection.ranges[0]
     let path = queryPath(node, this.path, R.startOffset)
+    console.log(R.startOffset, path.node.data.length)
     if (R.startOffset === 0) {
       path = path.prev
       pos = path.node.data.length

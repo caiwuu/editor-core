@@ -12,13 +12,14 @@ import {
   createPath,
   queryPath,
 } from '@/model'
-import { customFmt, formater } from './customFmt'
+import { formats, formater } from './formats'
 import { mark } from './data'
 // 注册自定义格式
-customFmt.forEach((ele) => {
+formats.forEach((ele) => {
   formater.register(ele)
 })
 
+// 根组件
 class Root extends Content {
   render() {
     return (
