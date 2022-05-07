@@ -46,7 +46,13 @@ export default class Formater {
         (componentQuene = formatQuene.filter((ele) => ele.fmt.type === 'component')).length
       ) {
         const mark = g.children[0]
-        return componentQuene[0].fmt.render(h, null, mark.data)
+        const fmt = componentQuene[0].fmt
+        const pv = fmt.render(h, null, mark.data)
+        if (fmt.isLeaf) {
+          setMarkVN(mark, pv)
+          setMark(pv, mark)
+        }
+        return pv
       } else {
         let pv = null
         let vn = null

@@ -9,6 +9,19 @@ export const mark = {
         data: {
           marks: [
             {
+              data: 'https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg',
+              alt: 'test image',
+              width: '50px',
+              height: '50px',
+            },
+          ],
+        },
+        formats: { image: true },
+      },
+      {
+        data: {
+          marks: [
+            {
               data: 'this is Paragraph',
               formats: { color: 'green' },
             },

@@ -113,6 +113,24 @@ const col = {
     return vn
   },
 }
+const image = {
+  name: 'image',
+  isLeaf: true,
+  type: 'component',
+  render: (h, vnode, data) => {
+    const vn = <Image data={data}></Image>
+    if (vnode) {
+      vnode.children.push(vn)
+    }
+    return vn
+  },
+}
+class Image extends Content {
+  render() {
+    const { data: src, alt, height, width } = this.state.marks[0]
+    return <img width={width} height={height} src={src} alt={alt}></img>
+  }
+}
 class Table extends Content {
   render() {
     return (
@@ -162,4 +180,16 @@ class Paragraph extends Content {
   }
 }
 
-export const formats = [bold, underline, fontSize, color, paragraph, del, sup, table, row, col]
+export const formats = [
+  bold,
+  image,
+  underline,
+  fontSize,
+  color,
+  paragraph,
+  del,
+  sup,
+  table,
+  row,
+  col,
+]
