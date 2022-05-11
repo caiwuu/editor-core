@@ -1,1 +1,1 @@
-# editor-model
+# editor-core
