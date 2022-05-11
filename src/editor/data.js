@@ -9,7 +9,7 @@ export const mark = {
         data: {
           marks: [
             {
-              data: 'https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg',
+              data: 'https://img2.baidu.com/it/u=3979034437,2878656671&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=333',
               alt: 'test image',
               width: '50px',
               height: '50px',

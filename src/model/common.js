@@ -30,6 +30,9 @@ class Path {
     this.next = next
     this.children = children
   }
+  get component() {
+    return this.node.data.component || this.parent.component
+  }
   delete() {
     const index = this.position.split('-').slice(-1)[0]
     if (!this.parent) {

@@ -157,26 +157,18 @@ class Col extends Content {
       </td>
     )
   }
-  get contentLength() {
-    return this.state.marks
-      .filter((ele) => typeof ele.data === 'string')
-      .reduce((prev, curr) => {
-        return prev + curr.data.length
-      }, 0)
-  }
-  beforeUpdateState(editor, path) {
-    const range = editor.selection.getRangeAt(0)
+  resetRange(range) {
+    console.log(this.contentLength)
     if (!this.contentLength) {
       console.log(this.state.marks)
-      // console.log(path)
-      range.setStart(this.state.elmRef.current, 0)
+      range.setStart(this.state.elmRef.current, 1)
       range.collapse(true)
     }
   }
 }
 class Paragraph extends Content {
   render() {
-    return <div>{formater.render(this.state.marks)}</div>
+    return <div>{this.contentLength ? formater.render(this.state.marks) : <br />}</div>
   }
 }
 

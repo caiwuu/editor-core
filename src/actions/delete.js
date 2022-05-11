@@ -2,11 +2,13 @@ import { getVn, getMark, queryPath } from '@/model'
 export default function del([R]) {
   if (R.collapsed) {
     const { startContainer, startOffset } = R
-    const marks = getMark(getVn(startContainer))
-    console.log(marks)
-    if (marks) {
+    // 非文本
+    if (startContainer.nodeType !== 3) {
+      return
+    } else {
+      // 文本
       let path = queryPath(startContainer, this.path, startOffset)
-      const component = path.parent.node.data.component
+      const component = path.component
       if (startOffset === 0) {
         path = path.prev
         pos = path.node.data.length
