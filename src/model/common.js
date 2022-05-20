@@ -87,8 +87,9 @@ export function queryPath(target, path, offset = 0) {
   // 通过elm查询
   if (target.nodeType) {
     const vn = getVn(target)
+    if (!vn) return null
     const marks = getMark(vn)
-    if (!marks) return
+    if (!marks) return null
     if (vn.type === 'text') {
       let index = 0
       let count = 0

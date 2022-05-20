@@ -43,7 +43,7 @@ function mountContent(id, editor) {
   createPath(mark)
   patch(renderRoot(h), document.getElementById(id))
 }
-export { formater, mountContent }
+export { mountContent }
 
 /**
  * ================TEST CODE===========
