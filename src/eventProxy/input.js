@@ -1,6 +1,6 @@
 import { times } from '@/utils'
 import del from './del'
-export default function input(event) {
+export default function input (event) {
   if (!this.collapsed) {
     del.call(this)
   }
@@ -16,7 +16,6 @@ export default function input(event) {
       prevInputValue = this.inputState.value
       this.inputState.value = inputData
     }
-    console.log(prevInputValue)
     times(prevInputValue.length, del, this, true)
     this.editor.emit('insert', { range: this, data: inputData })
   } else if (event.type === 'compositionstart') {

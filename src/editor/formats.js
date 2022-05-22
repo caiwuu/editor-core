@@ -126,13 +126,13 @@ const image = {
   },
 }
 class Image extends Content {
-  render() {
+  render () {
     const { data: src, alt, height, width } = this.state.marks[0]
     return <img width={width} height={height} src={src} alt={alt}></img>
   }
 }
 class Table extends Content {
-  render() {
+  render () {
     return (
       <table border='1' style='border-collapse:collapse;width:600px'>
         {formater.render(this.state.marks)}
@@ -141,7 +141,7 @@ class Table extends Content {
   }
 }
 class Row extends Content {
-  render() {
+  render () {
     return <tr>{formater.render(this.state.marks)}</tr>
   }
 }
@@ -150,15 +150,14 @@ class Col extends Content {
     super(props)
     this.state.elmRef = createRef()
   }
-  render() {
+  render () {
     return (
       <td ref={this.state.elmRef} style='text-align:center;width:50%'>
         {this.contentLength ? formater.render(this.state.marks) : <br />}
       </td>
     )
   }
-  resetRange(range) {
-    console.log(this.contentLength)
+  afterUpdateState ({ range }) {
     if (!this.contentLength) {
       console.log(this.state.marks)
       range.setStart(this.state.elmRef.current, 1)
@@ -167,7 +166,7 @@ class Col extends Content {
   }
 }
 class Paragraph extends Content {
-  render() {
+  render () {
     return <div>{this.contentLength ? formater.render(this.state.marks) : <br />}</div>
   }
 }
