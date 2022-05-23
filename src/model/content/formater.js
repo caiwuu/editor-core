@@ -50,7 +50,7 @@ export default class Formater {
         const pv = fmt.render(h, null, mark.data)
         if (fmt.isLeaf) {
           setMarkVN(mark, pv)
-          setMark(pv, mark)
+          setMark(pv, [mark])
         }
         return pv
       } else {
