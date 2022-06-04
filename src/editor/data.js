@@ -35,7 +35,7 @@ export const mark = {
       },
       {
         data: 'hhhha',
-        formats: { sup: true, del: true, color: 'green', 'font-size': '12px' },
+        formats: { sup: true, del: true, color: 'green', fontSize: '12px' },
       },
       {
         data: {
