@@ -4,6 +4,7 @@ import emit from 'mitt'
 import { mountContent } from './renderRoot'
 import registerActions from '@/actions'
 import { getVn, getMark, queryPath } from '@/model'
+import './formats'
 export default class Editor {
   ui = {
     body: null,
@@ -16,16 +17,16 @@ export default class Editor {
     this.selection = new Selection(this)
     registerActions(this)
   }
-  on(eventName, fn) {
+  on (eventName, fn) {
     this.emitter.on(eventName, fn)
   }
-  emit(eventName, args) {
+  emit (eventName, args) {
     this.emitter.emit(eventName, args)
   }
-  focus() {
+  focus () {
     this.emitter.emit('focus')
   }
-  queryPath(elm, offset = 0) {
+  queryPath (elm, offset = 0) {
     return queryPath(elm, this.path, offset)
   }
 }

@@ -1,5 +1,5 @@
-import { createElement as h, Formater, Content, createRef } from '@/model'
-const formater = new Formater()
+import { formater } from '@/model'
+import { Table, Row, Col, Image, Paragraph } from './components'
 const paragraph = {
   name: 'paragraph',
   type: 'component',
@@ -125,63 +125,18 @@ const image = {
     return vn
   },
 }
-class Image extends Content {
-  render() {
-    const { data: src, alt, height, width } = this.state.marks[0]
-    return <img width={width} height={height} src={src} alt={alt}></img>
-  }
-}
-class Table extends Content {
-  render() {
-    return (
-      <table border='1' style='border-collapse:collapse;width:600px'>
-        {formater.render(this.state.marks)}
-      </table>
-    )
-  }
-}
-class Row extends Content {
-  render() {
-    return <tr>{formater.render(this.state.marks)}</tr>
-  }
-}
-class Col extends Content {
-  constructor(props) {
-    super(props)
-    this.state.elmRef = createRef()
-  }
-  render() {
-    return (
-      <td ref={this.state.elmRef} style='text-align:center;width:50%'>
-        {this.contentLength ? formater.render(this.state.marks) : <br />}
-      </td>
-    )
-  }
-  afterUpdateState({ range }) {
-    if (!this.contentLength) {
-      console.log(this.state.marks)
-      range.setStart(this.state.elmRef.current, 1)
-      range.collapse(true)
-    }
-  }
-}
-class Paragraph extends Content {
-  render() {
-    return <div>{this.contentLength ? formater.render(this.state.marks) : <br />}</div>
-  }
-}
-
-export const formats = [
-  bold,
-  image,
-  underline,
-  fontSize,
-  color,
-  paragraph,
-  del,
-  sup,
-  table,
-  row,
-  col,
-]
-export { formater }
+  ;[
+    bold,
+    image,
+    underline,
+    fontSize,
+    color,
+    paragraph,
+    del,
+    sup,
+    table,
+    row,
+    col,
+  ].forEach((ele) => {
+    formater.register(ele)
+  })

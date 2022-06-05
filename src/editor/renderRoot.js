@@ -11,17 +11,13 @@ import {
   delVnIns,
   createPath,
   queryPath,
+  formater
 } from '@/model'
-import { formats, formater } from './formats'
 import { mark } from './data'
-// 注册自定义格式
-formats.forEach((ele) => {
-  formater.register(ele)
-})
 
 // 根组件
 class Root extends Content {
-  render() {
+  render () {
     return (
       <div id='editor-content'>
         {this.state.marks.length ? formater.render(this.state.marks) : this.state.placeholder(h)}
@@ -29,7 +25,7 @@ class Root extends Content {
     )
   }
 }
-function renderRoot(h) {
+function renderRoot (h) {
   return (
     <div id='editor-root'>
       <Root data={mark.data}></Root>
@@ -37,7 +33,7 @@ function renderRoot(h) {
   )
 }
 
-function mountContent(id, editor) {
+function mountContent (id, editor) {
   editor.data = mark
   editor.path = createPath(mark)
   createPath(mark)
