@@ -1,5 +1,13 @@
 import { formater } from '@/model'
-import { Table, Row, Col, Image, Paragraph } from './components'
+import { Table, Row, Col, Image, Paragraph, Root } from './components'
+const root = {
+  name: 'root',
+  type: 'component',
+  render: (h, vnode, data) => {
+    return <Root data={data}></Root>
+
+  },
+}
 const paragraph = {
   name: 'paragraph',
   type: 'component',
@@ -126,6 +134,7 @@ const image = {
   },
 }
   ;[
+    root,
     bold,
     image,
     underline,

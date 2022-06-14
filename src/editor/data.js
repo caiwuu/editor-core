@@ -1,4 +1,4 @@
-export const mark = {
+export const mockData = {
   data: {
     marks: [
       {
@@ -83,6 +83,7 @@ export const mark = {
       },
     ],
   },
+  formats: { root: true }
 }
 
-console.log(mark)
+console.log(mockData)

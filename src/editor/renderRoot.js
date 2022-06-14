@@ -13,30 +13,20 @@ import {
   queryPath,
   formater
 } from '@/model'
-import { mark } from './data'
+import { mockData } from './data'
 
-// 根组件
-class Root extends Content {
-  render () {
-    return (
-      <div id='editor-content'>
-        {this.state.marks.length ? formater.render(this.state.marks) : this.state.placeholder(h)}
-      </div>
-    )
-  }
-}
 function renderRoot (h) {
   return (
     <div id='editor-root'>
-      <Root data={mark.data}></Root>
+      {formater.render([mockData])}
     </div>
   )
 }
 
 function mountContent (id, editor) {
-  editor.data = mark
-  editor.path = createPath(mark)
-  createPath(mark)
+  editor.data = mockData
+  editor.path = createPath(mockData)
+  createPath(mockData)
   patch(renderRoot(h), document.getElementById(id))
 }
 export { mountContent }
@@ -44,7 +34,7 @@ export { mountContent }
 /**
  * ================TEST CODE===========
  */
-const path = createPath(mark)
+const path = createPath(mockData)
 console.log(path)
 
 console.log(queryPath('0-1', path))
