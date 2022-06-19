@@ -33,9 +33,17 @@ class Path {
   get component() {
     return this.node.data.component || this.parent.component
   }
+  format({ data = '', formats = {} } = {}) {
+    this.node.data = data
+    this.node.formats = formats
+  }
   delete() {
     const index = this.position.split('-').slice(-1)[0]
     if (!this.parent) {
+      return
+    }
+    if (this.parent.node.data.marks.length === 1) {
+      this.format()
       return
     }
     this.prev && (this.prev.next = this.next)

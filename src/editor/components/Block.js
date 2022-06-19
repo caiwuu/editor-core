@@ -5,7 +5,7 @@ export default class Block extends Content {
     if (!this.contentLength) {
       console.log(this.state.marks)
       console.log(path)
-      //   path.delete()
+      path.delete()
       range.setStart($root, 1)
       range.collapse(true)
     }

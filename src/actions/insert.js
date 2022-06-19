@@ -1,7 +1,6 @@
 import { getVn, getElm, getMark, queryPath } from '@/model'
 export default function insert({ range, data }) {
   const { startOffset: pos, startContainer: node } = range
-  debugger
   const marks = getMark(getVn(node))
   if (marks) {
     const path = queryPath(marks[0], this.path)
@@ -9,6 +8,7 @@ export default function insert({ range, data }) {
     path.node.data = path.node.data.slice(0, pos) + data + path.node.data.slice(pos)
     component.updateState(this, path)
     console.log(component.state.marks)
+    console.log(path)
     range.startOffset += data.length
     range.collapse(true)
   } else {

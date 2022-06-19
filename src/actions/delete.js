@@ -1,4 +1,5 @@
-export default function del ({ range }) {
+export default function del({ range }) {
+  debugger
   if (range.collapsed) {
     const { startContainer, startOffset } = range
     // 非文本
