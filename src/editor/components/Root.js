@@ -1,6 +1,7 @@
-import { createElement as h, formater, Content } from '@/model'
+import { createElement as h, formater } from '@/model'
+import Block from './Block'
 // 根组件
-export default class Root extends Content {
+export default class Root extends Block {
     render () {
         return (
             <div id='editor-content'>

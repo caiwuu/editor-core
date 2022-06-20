@@ -1,7 +1,6 @@
 import {
   createElement as h,
   patch,
-  Content,
   getVn,
   getElm,
   getMark,
