@@ -17,7 +17,7 @@ export default function input (event) {
       this.inputState.value = inputData
     }
     times(prevInputValue.length, del, this, true)
-    this.editor.emit('insert', { range: this, data: inputData })
+    inputData !== '' && this.editor.emit('insert', { range: this, data: inputData })
   } else if (event.type === 'compositionstart') {
     // console.log('开始聚合输入:', event.data)
     this.inputState.isComposing = true

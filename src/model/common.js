@@ -3,7 +3,7 @@ import { attributesModule } from './modules/attributes'
 import { listenersModule } from './modules/listeners'
 import { classesModule } from './modules/classes'
 import { getElm, getVn, getMark } from './mappings'
-export function updateProps(vnode, oldVnode) {
+export function updateProps (vnode, oldVnode) {
   if (typeof vnode.type === 'function') return
   const elm = getElm(vnode)
   if (vnode.type === 'text') {
@@ -17,7 +17,7 @@ export function updateProps(vnode, oldVnode) {
     attributesModule.update(elm, vnode, oldVnode)
   }
 }
-export function createRef() {
+export function createRef () {
   return { current: null }
 }
 
@@ -30,14 +30,20 @@ class Path {
     this.next = next
     this.children = children
   }
-  get component() {
+  get component () {
     return this.node.data.component || this.parent.component
   }
-  format({ data = '', formats = {} } = {}) {
+  get elm () {
+    return getElm(this.vn)
+  }
+  get vn () {
+    return getVn(this.node)
+  }
+  format ({ data = '', formats = {} } = {}) {
     this.node.data = data
     this.node.formats = formats
   }
-  delete() {
+  delete () {
     const index = this.position.split('-').slice(-1)[0]
     if (!this.parent) {
       return
@@ -52,7 +58,7 @@ class Path {
     this.parent.node.data.marks.splice(index, 1)
     this.parent.resetPosition()
   }
-  resetPosition() {
+  resetPosition () {
     this.children.forEach((path, index) => {
       const oldPosition = path.position
       const newPosition = this.position + '-' + index
@@ -62,7 +68,7 @@ class Path {
       }
     })
   }
-  traverse(fn) {
+  traverse (fn) {
     fn(this)
     if (this.children && this.children.length) {
       for (let index = 0; index < this.children.length; index++) {
@@ -71,10 +77,10 @@ class Path {
       }
     }
   }
-  stop() {}
-  skip() {}
+  stop () { }
+  skip () { }
 }
-export function createPath(current, parent = null, prev = null, next = null, index = 0) {
+export function createPath (current, parent = null, prev = null, next = null, index = 0) {
   const position = parent ? parent.position + '-' + index : '0'
   current.position = position
   const config = {
@@ -100,7 +106,7 @@ export function createPath(current, parent = null, prev = null, next = null, ind
   }
   return path
 }
-export function queryPath(target, path, offset = 0) {
+export function queryPath (target, path, offset = 0) {
   let position
   if (!target) return
   // 通过elm查询

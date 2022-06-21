@@ -28,7 +28,6 @@ class Formater {
         const markList = []
         const children = [
           g.children.reduce((prev, mark) => {
-            // console.log(mark.data)
             markList.push(mark)
             return prev + mark.data
           }, ''),
@@ -45,6 +44,7 @@ class Formater {
         const mark = g.children[0]
         const fmt = componentQuene[0].fmt
         const pv = fmt.render(h, null, mark.data)
+        console.log(pv);
         if (fmt.isLeaf) {
           setMarkVN(mark, pv)
           setMark(pv, [mark])

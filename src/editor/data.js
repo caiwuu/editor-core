@@ -56,6 +56,10 @@ export const mockData = {
                           data: '1111',
                           formats: { color: 'red' },
                         },
+                        {
+                          data: '333',
+                          formats: { del: true },
+                        },
                       ],
                     },
                     formats: { col: true },

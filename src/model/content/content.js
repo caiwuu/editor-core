@@ -22,9 +22,7 @@ export default class Content extends Component {
   updateState (path, range, editor) {
     this.beforeUpdateState && this.beforeUpdateState({ path, range, editor })
     this._update_()
-    // 重置选区
     this.afterUpdateState && this.afterUpdateState({ range, editor, path })
-
   }
 
   /**
@@ -47,27 +45,7 @@ export default class Content extends Component {
    * @memberof Content
    */
   onBackspace (path, range, editor) {
-    path.node.data = path.node.data.slice(0, range.startOffset - 1) + path.node.data.slice(range.startOffset)
-    this.updateState(path, range, editor)
-    range.startOffset -= 1
-    range.collapse(true)
-  }
-
-  /**
-   *
-   * 状态更新之后钩子
-   * @param {*} { range, path }
-   * @memberof Content
-   */
-  afterUpdateState ({ range, path }) {
-    if (!this.contentLength) {
-      console.log(this.state.marks)
-      console.log(path)
-      const prev = path.prev
-      path.delete()
-      range.setStart($root, 1)
-      range.collapse(true)
-    }
+    console.error('组件未实现onBackspace方法');
   }
 }
 
