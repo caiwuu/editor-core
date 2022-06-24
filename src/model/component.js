@@ -7,13 +7,13 @@ export default class Component {
   constructor(props) {
     this.props = Object.freeze({ ...props })
   }
-  render (h) {
+  render(h) {
     throw Error('Component does not implement a required interface "render"')
   }
-  setState (partialState = {}) {
-    enqueueSetState(partialState, this)
+  setState(partialState = {}) {
+    return enqueueSetState(partialState, this)
   }
-  _update_ () {
+  syncUpdate() {
     const oldVn = getVn(this)
     const newVn = this.render(h)
     patch(newVn, oldVn)

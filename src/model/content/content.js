@@ -5,7 +5,7 @@ export default class Content extends Component {
     super(props)
     this.initState()
   }
-  initState () {
+  initState() {
     this.props.data.component = this
     if (this.props.data) {
       this.state = { marks: this.props.data.marks }
@@ -19,10 +19,12 @@ export default class Content extends Component {
    * @param {*} editor
    * @memberof Content
    */
-  updateState (path, range, editor) {
+  updateState(path, range, editor) {
     this.beforeUpdateState && this.beforeUpdateState({ path, range, editor })
-    this._update_()
-    this.afterUpdateState && this.afterUpdateState({ range, editor, path })
+    // this.syncUpdate()
+    return this.setState().then(() => {
+      this.afterUpdateState && this.afterUpdateState({ range, editor, path })
+    })
   }
 
   /**
@@ -30,7 +32,7 @@ export default class Content extends Component {
    * @readonly
    * @memberof Content
    */
-  get contentLength () {
+  get contentLength() {
     return this.state.marks.reduce((prev, ele) => {
       return prev + computeLen(ele)
     }, 0)
@@ -44,12 +46,12 @@ export default class Content extends Component {
    * @param {*} editor
    * @memberof Content
    */
-  onBackspace (path, range, editor) {
-    console.error('组件未实现onBackspace方法');
+  onBackspace(path, range, editor) {
+    console.error('组件未实现onBackspace方法')
   }
 }
 
-function computeLen (mark) {
+function computeLen(mark) {
   if (!mark.formats) return 1
   if (isPrimitive(mark.data)) {
     return mark.data.length

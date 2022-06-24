@@ -73,11 +73,15 @@ export default class KeyboardProxy {
     this.editor.selection.ranges.forEach((range) => {
       input.call(range, event)
     })
-    this.editor.selection.ranges.forEach((range) => {
-      range.updateCaret()
+    Promise.resolve().then(() => {
+      Promise.resolve().then(() => {
+        this.editor.selection.ranges.forEach((range) => {
+          range.updateCaret()
+        })
+        this.editor.selection.distinct()
+        this.editor.focus()
+      })
     })
-    this.editor.selection.distinct()
-    this.editor.focus()
   }
   _handGolobalKeydown(event) {
     const key = event.key
@@ -101,8 +105,15 @@ export default class KeyboardProxy {
         this.editor.selection.ranges.forEach((range) => {
           del.call(range, false)
         })
-        this.editor.selection.ranges.forEach((range) => {
-          range.updateCaret()
+        // setTimeout(() => {
+        //   this.editor.selection.ranges.forEach((range) => {
+        //     range.updateCaret()
+        //   })
+        // })
+        Promise.resolve().then(() => {
+          this.editor.selection.ranges.forEach((range) => {
+            range.updateCaret()
+          })
         })
         break
       case 'Enter':
