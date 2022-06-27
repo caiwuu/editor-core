@@ -54,11 +54,11 @@ export const mockData = {
                       marks: [
                         {
                           data: '1111',
-                          formats: { color: 'red' },
+                          formats: { color: 'red', bold: true },
                         },
                         {
                           data: '333',
-                          formats: { del: true },
+                          formats: { del: true, color: 'red' },
                         },
                       ],
                     },
@@ -87,7 +87,7 @@ export const mockData = {
       },
     ],
   },
-  formats: { root: true }
+  formats: { root: true },
 }
 
 console.log(mockData)

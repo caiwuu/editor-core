@@ -112,6 +112,7 @@ export default class KeyboardProxy {
         // })
         Promise.resolve().then(() => {
           this.editor.selection.ranges.forEach((range) => {
+            console.log(range)
             range.updateCaret()
           })
         })

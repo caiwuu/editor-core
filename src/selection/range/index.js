@@ -6,6 +6,8 @@ export default class Range {
     isComposing: false,
   }
   _d = 0
+  _endContainer = null
+  _startContainer = null
   constructor(nativeRange, editor) {
     const { startContainer, endContainer, startOffset, endOffset } = nativeRange
     this.endContainer = endContainer
@@ -15,24 +17,36 @@ export default class Range {
     this.editor = editor
     this.caret = new Caret(this)
   }
+  get endContainer() {
+    return this._endContainer.elm || this._endContainer
+  }
+  set endContainer(value) {
+    this._endContainer = value
+  }
+  get startContainer() {
+    return this._startContainer.elm || this._startContainer
+  }
+  set startContainer(value) {
+    this._startContainer = value
+  }
   get collapsed() {
     return this.endContainer === this.startContainer && this.endOffset === this.startOffset
   }
   setEnd(endContainer, endOffset) {
-    this.endContainer = endContainer
+    this._endContainer = endContainer
     this.endOffset = endOffset
   }
   setStart(startContainer, startOffset) {
-    this.startContainer = startContainer
+    this._startContainer = startContainer
     this.startOffset = startOffset
   }
   collapse(toStart) {
     if (toStart) {
-      this.endContainer = this.startContainer
+      this._endContainer = this._startContainer
       this.endOffset = this.startOffset
     } else {
       this.startOffset = this.endOffset
-      this.startContainer = this.endContainer
+      this._startContainer = this._endContainer
     }
   }
   updateCaret(drawCaret = true) {
