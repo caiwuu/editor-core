@@ -1,7 +1,7 @@
 import Caret from './caret'
 export default class Range {
+  // 输入状态
   inputState = {
-    // 输入框状态
     value: '',
     isComposing: false,
   }
@@ -17,30 +17,30 @@ export default class Range {
     this.editor = editor
     this.caret = new Caret(this)
   }
-  get endContainer() {
+  get endContainer () {
     return this._endContainer.elm || this._endContainer
   }
-  set endContainer(value) {
+  set endContainer (value) {
     this._endContainer = value
   }
-  get startContainer() {
+  get startContainer () {
     return this._startContainer.elm || this._startContainer
   }
-  set startContainer(value) {
+  set startContainer (value) {
     this._startContainer = value
   }
-  get collapsed() {
+  get collapsed () {
     return this.endContainer === this.startContainer && this.endOffset === this.startOffset
   }
-  setEnd(endContainer, endOffset) {
+  setEnd (endContainer, endOffset) {
     this._endContainer = endContainer
     this.endOffset = endOffset
   }
-  setStart(startContainer, startOffset) {
+  setStart (startContainer, startOffset) {
     this._startContainer = startContainer
     this.startOffset = startOffset
   }
-  collapse(toStart) {
+  collapse (toStart) {
     if (toStart) {
       this._endContainer = this._startContainer
       this.endOffset = this.startOffset
@@ -49,10 +49,10 @@ export default class Range {
       this._startContainer = this._endContainer
     }
   }
-  updateCaret(drawCaret = true) {
+  updateCaret (drawCaret = true) {
     this.caret.update(this, drawCaret)
   }
-  remove() {
+  remove () {
     const index = this.editor.selection.ranges.findIndex((i) => i === this)
     this.caret.remove()
     this.editor.selection.ranges.splice(index, 1)

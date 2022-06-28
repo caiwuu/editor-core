@@ -39,6 +39,14 @@ class Path {
   get vn () {
     return getVn(this.node)
   }
+  get lastLeaf () {
+    if (this.children.length === 0) return this
+    return this.children[this.children.length - 1].lastLeaf
+  }
+  get firstLeaf () {
+    if (this.children.length === 0) return this
+    return this.children[0].firstLeaf
+  }
   format ({ data = '', formats = {} } = {}) {
     this.node.data = data
     this.node.formats = formats
