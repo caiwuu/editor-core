@@ -110,8 +110,16 @@ export default class Content extends Component {
    * @param {*} editor 编辑器
    * @memberof Content
    */
-  onArrowLeft(path, range, editor) {
-    console.error('组件未实现onArrowLeft方法')
+  onArrowLeft(path, range, editor, shiftKey) {
+    if (range.startOffset === 0) {
+      let prev = getPrevPath(path).lastLeaf
+      console.log(prev)
+      range.setStart(prev, prev.node.data.length)
+    } else {
+      range.startOffset -= 1
+    }
+    range.collapse(true)
+    this.updateState(path, range, editor)
   }
   /**
    *
@@ -134,4 +142,8 @@ function computeLen(mark) {
   return mark.data.marks.reduce((prev, ele) => {
     return prev + computeLen(ele)
   }, 0)
+}
+
+function getPrevPath(path) {
+  return path.prev || getPrevPath(path.parent)
 }

@@ -87,29 +87,40 @@ export default class KeyboardProxy {
     const key = event.key
     switch (key) {
       case 'ArrowRight':
-        this.editor.emit('caretMove', 'right', true, event.shiftKey)
+        this.editor.emit('caretMove', {
+          direction: 'right',
+          drawCaret: true,
+          shiftKey: event.shiftKey,
+        })
         break
       case 'ArrowLeft':
-        this.editor.emit('caretMove', 'left', true, event.shiftKey)
+        this.editor.emit('caretMove', {
+          direction: 'left',
+          drawCaret: true,
+          shiftKey: event.shiftKey,
+        })
         break
       case 'ArrowUp':
         event.preventDefault()
-        this.editor.emit('caretMove', 'up', false, event.shiftKey)
+        this.editor.emit('caretMove', {
+          direction: 'up',
+          drawCaret: true,
+          shiftKey: event.shiftKey,
+        })
         break
       case 'ArrowDown':
         event.preventDefault()
-        this.editor.emit('caretMove', 'down', false, event.shiftKey)
+        this.editor.emit('caretMove', {
+          direction: 'down',
+          drawCaret: true,
+          shiftKey: event.shiftKey,
+        })
         break
       case 'Backspace':
         event.preventDefault()
         this.editor.selection.ranges.forEach((range) => {
           del.call(range, false)
         })
-        // setTimeout(() => {
-        //   this.editor.selection.ranges.forEach((range) => {
-        //     range.updateCaret()
-        //   })
-        // })
         Promise.resolve().then(() => {
           this.editor.selection.ranges.forEach((range) => {
             console.log(range)
