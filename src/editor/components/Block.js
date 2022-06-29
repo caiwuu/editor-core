@@ -1,15 +1,13 @@
 import { createElement as h, Content, getVn, getElm } from '@/model'
 export default class Block extends Content {
-  getBlockRoot () {
+  getBlockRoot() {
     if (this.state._$root) return this.state._$root.current
     return getElm(getVn(this))
   }
-  onBackspace (path, range, editor) {
+  onBackspace(path, range, editor) {
     path.node.data =
       path.node.data.slice(0, range.startOffset - 1) + path.node.data.slice(range.startOffset)
     if (!this.contentLength) {
-      console.log(getVn(path.parent.node))
-      console.log(getElm(getVn(path.parent.node)))
       const $root = this.getBlockRoot()
       path.delete()
       range.setStart($root, 0)
