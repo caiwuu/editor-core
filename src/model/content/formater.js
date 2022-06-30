@@ -3,10 +3,10 @@ import { setMark, setMarkVN } from '../mappings'
 
 class Formater {
   formatMap = new Map()
-  register (format) {
+  register(format) {
     this.formatMap.set(format.name, format)
   }
-  render (marks) {
+  render(marks) {
     const gs = this.group(
       {
         marks: marks,
@@ -17,10 +17,10 @@ class Formater {
     const vn = this.generateVnode(gs)
     return vn
   }
-  invokeRender (vn, current) {
+  invokeRender(vn, current) {
     return current.fmt.render(h, vn, current.value)
   }
-  generateVnode (gs) {
+  generateVnode(gs) {
     return gs.map((g) => {
       let componentQuene
       const formatQuene = this.getFormats(g.commonFormats)
@@ -44,7 +44,6 @@ class Formater {
         const mark = g.children[0]
         const fmt = componentQuene[0].fmt
         const pv = fmt.render(h, null, mark.data)
-        console.log(pv);
         if (fmt.isLeaf) {
           setMarkVN(mark, pv)
           setMark(pv, [mark])
@@ -103,10 +102,10 @@ class Formater {
       }
     })
   }
-  get types () {
+  get types() {
     return [...this.formatMap.keys()]
   }
-  getFormats (objs) {
+  getFormats(objs) {
     return objs.map((obj) => {
       const key = Object.keys(obj)[0]
       return {
@@ -115,10 +114,10 @@ class Formater {
       }
     })
   }
-  get (key) {
+  get(key) {
     return this.formatMap.get(key) || {}
   }
-  canAdd (mark, prevMark, key) {
+  canAdd(mark, prevMark, key) {
     /**
      * 当前无格式
      */
@@ -132,7 +131,7 @@ class Formater {
      */
     if (mark.formats[key] === prevMark.formats[key]) return true
   }
-  group (group, index, r = []) {
+  group(group, index, r = []) {
     const grouped = { commonFormats: [], children: [] }
     let restFormats = []
     let prevMark = null
