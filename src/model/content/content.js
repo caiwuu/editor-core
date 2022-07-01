@@ -113,7 +113,7 @@ export default class Content extends Component {
   onArrowLeft(path, range, editor, shiftKey) {
     if (range.startOffset === 0) {
       let prev = getPrevPath(path).lastLeaf
-      console.log(prev)
+      console.log(prev.component.con)
       range.setStart(prev, prev.node.data.length)
     } else {
       range.startOffset -= 1
