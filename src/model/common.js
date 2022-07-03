@@ -22,12 +22,12 @@ export function createRef() {
 }
 
 class Path {
-  constructor({ node, parent, position, prev, next, children }) {
+  constructor({ node, parent, position, prevSibling, nextSibling, children }) {
     this.node = node
     this.parent = parent
     this.position = position
-    this.prev = prev
-    this.next = next
+    this.prevSibling = prevSibling
+    this.nextSibling = nextSibling
     this.children = children
   }
   get component() {
@@ -69,8 +69,8 @@ class Path {
       this.format()
       return
     }
-    this.prev && (this.prev.next = this.next)
-    this.next && (this.next.prev = this.prev)
+    this.prevSibling && (this.prevSibling.nextSibling = this.nextSibling)
+    this.nextSibling && (this.nextSibling.prevSibling = this.prevSibling)
     this.parent.children.splice(index, 1)
     this.parent.node.data.marks.splice(index, 1)
     this.parent.resetPosition()
@@ -97,15 +97,21 @@ class Path {
   stop() {}
   skip() {}
 }
-export function createPath(current, parent = null, prev = null, next = null, index = 0) {
+export function createPath(
+  current,
+  parent = null,
+  prevSibling = null,
+  nextSibling = null,
+  index = 0
+) {
   const position = parent ? parent.position + '-' + index : '0'
   current.position = position
   const config = {
     node: current,
     parent: parent,
     position: position,
-    prev: prev,
-    next: next,
+    prevSibling: prevSibling,
+    nextSibling: nextSibling,
     children: [],
   }
   const path = new Path(config)
@@ -114,9 +120,9 @@ export function createPath(current, parent = null, prev = null, next = null, ind
     current.data.marks.reduce((prevPath, currMark, index) => {
       currPath = createPath(currMark, path, prevPath, null, index)
       if (prevPath) {
-        prevPath.next = currPath
+        prevPath.nextSibling = currPath
       }
-      currPath.prev = prevPath
+      currPath.prevSibling = prevPath
       path.children.push(currPath)
       return currPath
     }, null)

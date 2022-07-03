@@ -5,18 +5,28 @@ export default class Block extends Content {
     return getElm(getVn(this))
   }
   onBackspace(path, range, editor) {
-    path.node.data =
-      path.node.data.slice(0, range.startOffset - 1) + path.node.data.slice(range.startOffset)
-    if (!this.contentLength) {
-      const $root = this.getBlockRoot()
-      path.delete()
-      range.setStart($root, 0)
-    } else if (path.node.data === '') {
-      path.delete()
-      let prev = path.prev.lastLeaf
-      range.setStart(prev, prev.node.data.length)
+    const startOffset = range.startOffset
+    if (startOffset > 0) {
+      path.node.data = path.node.data.slice(0, startOffset - 1) + path.node.data.slice(startOffset)
+      if (!this.contentLength) {
+        const $root = this.getBlockRoot()
+        path.delete()
+        range.setStart($root, 0)
+      } else if (path.node.data === '') {
+        const prevSibling = this.getPrevPath(path)?.lastLeaf
+        path.delete()
+        if (prevSibling) {
+          range.setStart(prevSibling, prevSibling.node.data.length)
+        }
+      } else {
+        range.startOffset -= 1
+      }
     } else {
-      range.startOffset -= 1
+      console.log(path.prevSibling)
+      const prevSibling = this.getPrevPath(path)?.lastLeaf
+      if (prevSibling) {
+        range.setStart(prevSibling, prevSibling.node.data.length)
+      }
     }
     range.collapse(true)
     this.updateState(path, range, editor)

@@ -26,4 +26,7 @@ export class Col extends Block {
       </td>
     )
   }
+  getPrevPath(path) {
+    return path.prevSibling
+  }
 }

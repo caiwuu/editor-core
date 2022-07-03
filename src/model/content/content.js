@@ -52,19 +52,23 @@ export default class Content extends Component {
    * @memberof Content
    */
   onBackspace(path, range, editor) {
-    if (path.node.data.length === 1) {
-      const prev = path.prev
-      if (!prev) {
-        console.error('获取上一个路径失败,请拓展内容组件的onBackspace方法')
-        return
+    const startOffset = range.startOffset
+    if (startOffset > 0) {
+      path.node.data = path.node.data.slice(0, startOffset - 1) + path.node.data.slice(startOffset)
+      if (path.node.data === '') {
+        const prevSibling = getPrevPath(path).lastLeaf
+        path.delete()
+        if (prevSibling) {
+          range.setStart(prevSibling, prevSibling.node.data.length)
+        }
+      } else {
+        range.startOffset -= 1
       }
-      const prevLastLeaf = prev.lastLeaf
-      path.delete()
-      range.setStart(prevLastLeaf, prevLastLeaf.node.data.length)
     } else {
-      path.node.data =
-        path.node.data.slice(0, range.startOffset - 1) + path.node.data.slice(range.startOffset)
-      range.startOffset -= 1
+      const prevSibling = getPrevPath(path).lastLeaf
+      if (prevSibling) {
+        range.setStart(prevSibling, prevSibling.node.data.length)
+      }
     }
     range.collapse(true)
     this.updateState(path, range, editor)
@@ -112,9 +116,8 @@ export default class Content extends Component {
    */
   onArrowLeft(path, range, editor, shiftKey) {
     if (range.startOffset === 0) {
-      let prev = getPrevPath(path).lastLeaf
-      console.log(prev.component.con)
-      range.setStart(prev, prev.node.data.length)
+      let prevSibling = this.getPrevPath(path).lastLeaf
+      range.setStart(prevSibling, prevSibling.node.data.length)
     } else {
       range.startOffset -= 1
     }
@@ -132,6 +135,12 @@ export default class Content extends Component {
   onEnter(path, range, editor) {
     console.error('组件未实现onEnter方法')
   }
+  getPrevPath(path) {
+    return path.prevSibling || this.getPrevPath(path.parent)
+  }
+  getNextPath(path) {
+    return path.NextSibling || this.getNextPath(path.parent)
+  }
 }
 
 function computeLen(mark) {
@@ -139,11 +148,7 @@ function computeLen(mark) {
   if (isPrimitive(mark.data)) {
     return mark.data.length
   }
-  return mark.data.marks.reduce((prev, ele) => {
-    return prev + computeLen(ele)
+  return mark.data.marks.reduce((prevSibling, ele) => {
+    return prevSibling + computeLen(ele)
   }, 0)
-}
-
-function getPrevPath(path) {
-  return path.prev || getPrevPath(path.parent)
 }
