@@ -3,6 +3,12 @@ import { attributesModule } from './modules/attributes'
 import { listenersModule } from './modules/listeners'
 import { classesModule } from './modules/classes'
 import { getElm, getVn, getMark } from './mappings'
+/**
+ * @desc: 更新dom属性
+ * @param {*} vnode
+ * @param {*} oldVnode
+ * @return {*}
+ */
 export function updateProps(vnode, oldVnode) {
   if (typeof vnode.type === 'function') return
   const elm = getElm(vnode)
@@ -17,10 +23,19 @@ export function updateProps(vnode, oldVnode) {
     attributesModule.update(elm, vnode, oldVnode)
   }
 }
+
+/**
+ * @desc: 创建ref
+ * @return {*}
+ */
 export function createRef() {
   return { current: null }
 }
 
+/**
+ * @desc: path mark的链表树
+ * @return {*}
+ */
 class Path {
   constructor({ node, parent, position, prevSibling, nextSibling, children }) {
     this.node = node
@@ -56,25 +71,45 @@ class Path {
     }
     return path
   }
+  get index() {
+    return this.position.split('-').slice(-1)[0] / 1
+  }
+
+  /**
+   * @desc: 格式化内容和格式
+   * @param {*} data
+   * @param {*} formats
+   * @return {*}
+   */
   format({ data = '', formats = {} } = {}) {
     this.node.data = data
     this.node.formats = formats
   }
+
+  /**
+   * @desc: path删除
+   * @return {*}
+   */
   delete() {
-    const index = this.position.split('-').slice(-1)[0]
     if (!this.parent) {
       return
     }
+    // 为了保持链表的连续性 marks长度不能为零
     if (this.parent.node.data.marks.length === 1) {
       this.format()
       return
     }
     this.prevSibling && (this.prevSibling.nextSibling = this.nextSibling)
     this.nextSibling && (this.nextSibling.prevSibling = this.prevSibling)
-    this.parent.children.splice(index, 1)
-    this.parent.node.data.marks.splice(index, 1)
+    this.parent.children.splice(this.index, 1)
+    this.parent.node.data.marks.splice(this.index, 1)
     this.parent.resetPosition()
   }
+
+  /**
+   * @desc: 重新设置位置信息
+   * @return {*}
+   */
   resetPosition() {
     this.children.forEach((path, index) => {
       const oldPosition = path.position
@@ -85,6 +120,12 @@ class Path {
       }
     })
   }
+
+  /**
+   * @desc: 深度优先遍历
+   * @param {*} fn
+   * @return {*}
+   */
   traverse(fn) {
     fn(this)
     if (this.children && this.children.length) {
@@ -97,6 +138,11 @@ class Path {
   stop() {}
   skip() {}
 }
+
+/**
+ * @desc: 创建path
+ * @return {*}
+ */
 export function createPath(
   current,
   parent = null,
@@ -129,6 +175,13 @@ export function createPath(
   }
   return path
 }
+/**
+ * @desc:
+ * @param {elm|mark|position} target
+ * @param {path} path
+ * @param {number} offset
+ * @return {path}
+ */
 export function queryPath(target, path, offset = 0) {
   let position
   if (!target) return

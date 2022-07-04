@@ -1,3 +1,10 @@
+/*
+ * @Author: caiwu
+ * @Description:
+ * @CreateDate:
+ * @LastEditor:
+ * @LastEditTime: 2022-07-04 14:00:12
+ */
 import {
   createElement as h,
   patch,
@@ -10,21 +17,26 @@ import {
   delVnIns,
   createPath,
   queryPath,
-  formater
+  formater,
 } from '@/model'
 import { mockData } from './data'
-
-function renderRoot (h) {
-  return (
-    <div id='editor-root'>
-      {formater.render([mockData])}
-    </div>
-  )
+/**
+ * @desc: 渲染根节点
+ * @param {*} h
+ * @return {*}
+ */
+function renderRoot(h) {
+  return <div id='editor-root'>{formater.render([mockData])}</div>
 }
-
-function mountContent (id, editor) {
+/**
+ * @desc: 挂载
+ * @param {*} id
+ * @param {*} editor
+ * @return {*}
+ */
+function mountContent(id, editor) {
   editor.data = mockData
-  editor.path = createPath(mockData)
+  window.utils.path = editor.path = createPath(mockData)
   createPath(mockData)
   patch(renderRoot(h), document.getElementById(id))
 }
@@ -33,9 +45,5 @@ export { mountContent }
 /**
  * ================TEST CODE===========
  */
-const path = createPath(mockData)
-console.log(path)
-
-console.log(queryPath('0-1', path))
 
 window.utils = { getVn, getElm, setVnElm, setVnIns, delVnElm, delVnIns, queryPath, getMark }

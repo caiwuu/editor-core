@@ -56,18 +56,18 @@ export default class Content extends Component {
     if (startOffset > 0) {
       path.node.data = path.node.data.slice(0, startOffset - 1) + path.node.data.slice(startOffset)
       if (path.node.data === '') {
-        const prevSibling = getPrevPath(path).lastLeaf
+        const prev = getPrevPath(path).lastLeaf
         path.delete()
-        if (prevSibling) {
-          range.setStart(prevSibling, prevSibling.node.data.length)
+        if (prev) {
+          range.setStart(prev, prev.node.data.length)
         }
       } else {
         range.startOffset -= 1
       }
     } else {
-      const prevSibling = getPrevPath(path).lastLeaf
-      if (prevSibling) {
-        range.setStart(prevSibling, prevSibling.node.data.length)
+      const prev = getPrevPath(path).lastLeaf
+      if (prev) {
+        range.setStart(prev, prev.node.data.length)
       }
     }
     range.collapse(true)
@@ -116,8 +116,14 @@ export default class Content extends Component {
    */
   onArrowLeft(path, range, editor, shiftKey) {
     if (range.startOffset === 0) {
-      let prevSibling = this.getPrevPath(path).lastLeaf
-      range.setStart(prevSibling, prevSibling.node.data.length)
+      let prev = this.getPrevPath(path).lastLeaf
+      if (isImage(prev)) {
+        console.log(prev.parent.parent)
+        console.log(prev.parent.index)
+        range.setStart(prev.parent.parent, prev.parent.index + 1)
+      } else {
+        range.setStart(prev, prev.node.data.length)
+      }
     } else {
       range.startOffset -= 1
     }
@@ -135,14 +141,28 @@ export default class Content extends Component {
   onEnter(path, range, editor) {
     console.error('组件未实现onEnter方法')
   }
+  /**
+   * @desc: 获取前一个路径
+   * @param {*} path
+   * @return {*}
+   */
   getPrevPath(path) {
     return path.prevSibling || this.getPrevPath(path.parent)
   }
+  /**
+   * @desc: 获取下一个路径
+   * @param {*} path
+   * @return {*}
+   */
   getNextPath(path) {
     return path.NextSibling || this.getNextPath(path.parent)
   }
 }
-
+/**
+ * @desc: 计算mark长度
+ * @param {*} mark
+ * @return {*}
+ */
 function computeLen(mark) {
   if (!mark.formats) return 1
   if (isPrimitive(mark.data)) {
@@ -151,4 +171,12 @@ function computeLen(mark) {
   return mark.data.marks.reduce((prevSibling, ele) => {
     return prevSibling + computeLen(ele)
   }, 0)
+}
+/**
+ * @desc: 判断是否为图片
+ * @param {*} path
+ * @return {*}
+ */
+function isImage(path) {
+  return !path.node.formats
 }

@@ -1,38 +1,45 @@
+/*
+ * @Author: caiwu
+ * @Description:
+ * @CreateDate:
+ * @LastEditor:
+ * @LastEditTime: 2022-07-04 17:10:23
+ */
 const VNElmMap = new WeakMap()
 const VNInsMap = new WeakMap()
 const VNMarkMap = new WeakMap()
 const markVNMap = new WeakMap()
-function setMarkVN (mark, vn) {
+function setMarkVN(mark, vn) {
   markVNMap.set(mark, vn)
 }
-function setMark (vn, marks) {
+function setMark(vn, marks) {
   VNMarkMap.set(vn, marks)
 }
-function getMark (vn) {
+function getMark(vn) {
   return VNMarkMap.get(vn)
 }
-function getVn (key) {
+function getVn(key) {
   if (key.nodeType) return VNElmMap.get(key)
   return VNInsMap.get(key) || markVNMap.get(key)
 }
-function getElm (key) {
+function getElm(key) {
   return VNElmMap.get(key)
 }
-function setVnElm (vn, elm) {
-  delVnElm(vn)
+function setVnElm(vn, elm) {
+  // delVnElm(vn)
   VNElmMap.set(elm, vn).set(vn, elm)
 }
-function setVnIns (vn, ins) {
-  delVnIns(vn)
+function setVnIns(vn, ins) {
+  // delVnIns(vn)
   VNInsMap.set(ins, vn).set(vn, ins)
 }
-function delVnElm (key) {
+function delVnElm(key) {
   const vnOrElm = VNElmMap.get(key)
   if (VNMarkMap.has(vnOrElm)) VNMarkMap.delete(vnOrElm)
   VNElmMap.delete(key)
   VNElmMap.delete(vnOrElm)
 }
-function delVnIns (key) {
+function delVnIns(key) {
   const vnOrIns = VNInsMap.get(key)
   if (VNMarkMap.has(vnOrIns)) VNMarkMap.delete(vnOrIns)
   VNInsMap.delete(key)

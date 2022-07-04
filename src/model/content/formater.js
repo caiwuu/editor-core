@@ -44,10 +44,12 @@ class Formater {
         const mark = g.children[0]
         const fmt = componentQuene[0].fmt
         const pv = fmt.render(h, null, mark.data)
-        if (fmt.isLeaf) {
-          setMarkVN(mark, pv)
-          setMark(pv, [mark])
-        }
+        // if (fmt.isLeaf) {
+        // debugger
+        setMarkVN(mark, pv)
+        console.log(mark, pv)
+        setMark(pv, [mark])
+        // }
         return pv
       } else {
         let pv = null

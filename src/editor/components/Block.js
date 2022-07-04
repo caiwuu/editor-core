@@ -1,9 +1,27 @@
+/*
+ * @Description:
+ * @Author: caiwu
+ * @CreateDate:
+ * @LastEditor:
+ * @LastEditTime: 2022-07-04 17:04:19
+ */
 import { createElement as h, Content, getVn, getElm } from '@/model'
 export default class Block extends Content {
+  /**
+   * @desc: 获取块级根节点
+   * @return {*}
+   */
   getBlockRoot() {
     if (this.state._$root) return this.state._$root.current
     return getElm(getVn(this))
   }
+  /**
+   * @desc: 删除动作
+   * @param {*} path
+   * @param {*} range
+   * @param {*} editor
+   * @return {*}
+   */
   onBackspace(path, range, editor) {
     const startOffset = range.startOffset
     if (startOffset > 0) {
@@ -13,19 +31,18 @@ export default class Block extends Content {
         path.delete()
         range.setStart($root, 0)
       } else if (path.node.data === '') {
-        const prevSibling = this.getPrevPath(path)?.lastLeaf
+        const prev = this.getPrevPath(path)?.lastLeaf
         path.delete()
-        if (prevSibling) {
-          range.setStart(prevSibling, prevSibling.node.data.length)
+        if (prev) {
+          range.setStart(prev, prev.node.data.length)
         }
       } else {
         range.startOffset -= 1
       }
     } else {
-      console.log(path.prevSibling)
-      const prevSibling = this.getPrevPath(path)?.lastLeaf
-      if (prevSibling) {
-        range.setStart(prevSibling, prevSibling.node.data.length)
+      const prev = this.getPrevPath(path)?.lastLeaf
+      if (prev) {
+        range.setStart(prev, prev.node.data.length)
       }
     }
     range.collapse(true)
