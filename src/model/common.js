@@ -9,7 +9,7 @@ import { getElm, getVn, getMark } from './mappings'
  * @param {*} oldVnode
  * @return {*}
  */
-export function updateProps(vnode, oldVnode) {
+export function updateProps (vnode, oldVnode) {
   if (typeof vnode.type === 'function') return
   const elm = getElm(vnode)
   if (vnode.type === 'text') {
@@ -28,7 +28,7 @@ export function updateProps(vnode, oldVnode) {
  * @desc: 创建ref
  * @return {*}
  */
-export function createRef() {
+export function createRef () {
   return { current: null }
 }
 
@@ -45,33 +45,33 @@ class Path {
     this.nextSibling = nextSibling
     this.children = children
   }
-  get component() {
+  get component () {
     return this.node.data.component || this.parent.component
   }
-  get elm() {
+  get elm () {
     return getElm(this.vn)
   }
-  get vn() {
+  get vn () {
     return getVn(this.node)
   }
-  get isLeaf() {
+  get isLeaf () {
     return this.children.length === 0
   }
-  get firstLeaf() {
+  get firstLeaf () {
     let path = this
     while (path.children && path.children.length) {
       path = path.children[0]
     }
     return path
   }
-  get lastLeaf() {
+  get lastLeaf () {
     let path = this
     while (path.children && path.children.length) {
       path = path.children[path.children.length - 1]
     }
     return path
   }
-  get index() {
+  get index () {
     return this.position.split('-').slice(-1)[0] / 1
   }
 
@@ -81,7 +81,7 @@ class Path {
    * @param {*} formats
    * @return {*}
    */
-  format({ data = '', formats = {} } = {}) {
+  format ({ data = '', formats = {} } = {}) {
     this.node.data = data
     this.node.formats = formats
   }
@@ -90,7 +90,7 @@ class Path {
    * @desc: path删除
    * @return {*}
    */
-  delete() {
+  delete () {
     if (!this.parent) {
       return
     }
@@ -110,7 +110,7 @@ class Path {
    * @desc: 重新设置位置信息
    * @return {*}
    */
-  resetPosition() {
+  resetPosition () {
     this.children.forEach((path, index) => {
       const oldPosition = path.position
       const newPosition = this.position + '-' + index
@@ -126,7 +126,7 @@ class Path {
    * @param {*} fn
    * @return {*}
    */
-  traverse(fn) {
+  traverse (fn) {
     fn(this)
     if (this.children && this.children.length) {
       for (let index = 0; index < this.children.length; index++) {
@@ -135,15 +135,15 @@ class Path {
       }
     }
   }
-  stop() {}
-  skip() {}
+  stop () { }
+  skip () { }
 }
 
 /**
  * @desc: 创建path
  * @return {*}
  */
-export function createPath(
+export function createPath (
   current,
   parent = null,
   prevSibling = null,
@@ -182,7 +182,7 @@ export function createPath(
  * @param {number} offset
  * @return {path}
  */
-export function queryPath(target, path, offset = 0) {
+export function queryPath (target, path, offset = 0) {
   let position
   if (!target) return
   // 通过elm查询

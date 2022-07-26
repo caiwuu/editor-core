@@ -8,7 +8,7 @@ export default class Content extends Component {
   /**
    * 初始化状态
    */
-  initState() {
+  initState () {
     this.props.data.component = this
     if (this.props.data) {
       this.state = { marks: this.props.data.marks }
@@ -22,7 +22,7 @@ export default class Content extends Component {
    * @param {*} editor
    * @memberof Content
    */
-  updateState(path, range, editor) {
+  updateState (path, range, editor) {
     this.beforeUpdateState && this.beforeUpdateState({ path, range, editor })
     // 同步更新
     // this.syncUpdate()
@@ -37,7 +37,7 @@ export default class Content extends Component {
    * @readonly
    * @memberof Content
    */
-  get contentLength() {
+  get contentLength () {
     return this.state.marks.reduce((prev, ele) => {
       return prev + computeLen(ele)
     }, 0)
@@ -51,7 +51,7 @@ export default class Content extends Component {
    * @param {*} editor 编辑器
    * @memberof Content
    */
-  onBackspace(path, range, editor) {
+  onBackspace (path, range, editor) {
     const startOffset = range.startOffset
     if (startOffset > 0) {
       path.node.data = path.node.data.slice(0, startOffset - 1) + path.node.data.slice(startOffset)
@@ -81,7 +81,7 @@ export default class Content extends Component {
    * @param {*} editor 编辑器
    * @memberof Content
    */
-  onArrowUp(path, range, editor) {
+  onArrowUp (path, range, editor) {
     console.error('组件未实现onArrowUp方法')
   }
   /**
@@ -92,7 +92,7 @@ export default class Content extends Component {
    * @param {*} editor 编辑器
    * @memberof Content
    */
-  onArrowRight(path, range, editor) {
+  onArrowRight (path, range, editor) {
     console.error('组件未实现onArrowRight方法')
   }
   /**
@@ -103,7 +103,7 @@ export default class Content extends Component {
    * @param {*} editor 编辑器
    * @memberof Content
    */
-  onArrowDown(path, range, editor) {
+  onArrowDown (path, range, editor) {
     console.error('组件未实现onArrowDown方法')
   }
   /**
@@ -114,7 +114,7 @@ export default class Content extends Component {
    * @param {*} editor 编辑器
    * @memberof Content
    */
-  onArrowLeft(path, range, editor, shiftKey) {
+  onArrowLeft (path, range, editor, shiftKey) {
     if (range.startOffset === 0) {
       let prev = this.getPrevPath(path)?.lastLeaf
       prev && range.setStart(prev, prev.node.data.length)
@@ -132,18 +132,18 @@ export default class Content extends Component {
    * @param {*} editor 编辑器
    * @memberof Content
    */
-  onEnter(path, range, editor) {
+  onEnter (path, range, editor) {
     console.error('组件未实现onEnter方法')
   }
-  getPrevPath(path) {
+  getPrevPath (path) {
     return path.prevSibling || this.getPrevPath(path.parent)
   }
-  getNextPath(path) {
+  getNextPath (path) {
     return path.NextSibling || this.getNextPath(path.parent)
   }
 }
 
-function computeLen(mark) {
+function computeLen (mark) {
   if (!mark.formats) return 1
   if (isPrimitive(mark.data)) {
     return mark.data.length

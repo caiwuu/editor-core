@@ -3,7 +3,7 @@ import { updateProps } from './common'
 import { setVnElm, setVnIns } from './mappings'
 const BUILTINPROPS = ['ref', 'key', 'ns']
 const insertedInsQueue = []
-function styleToObj(str) {
+function styleToObj (str) {
   str = str.trim()
   return str
     .split(';')
@@ -14,7 +14,7 @@ function styleToObj(str) {
       return prev
     }, {})
 }
-export function domToVNode(node) {
+export function domToVNode (node) {
   const type = node.tagName.toLowerCase() || 'text'
   if (type === 'text') {
     return createElement(type)
@@ -36,7 +36,7 @@ export function domToVNode(node) {
   }
   return createElement(type, config, children)
 }
-export function createElm(vnode) {
+export function createElm (vnode) {
   let elm
   if (vnode.type === 'text') {
     elm = document.createTextNode(vnode.children)
@@ -55,6 +55,7 @@ export function createElm(vnode) {
       if (vnode.ref) vnode.ref.current = ins
       elm = createElm(vn)
       insertedInsQueue.push(ins)
+      console.log(elm, vn, ins);
       setVnElm(elm, vn)
       updateProps(vn)
     } else {
@@ -85,7 +86,7 @@ export function createElm(vnode) {
   }
   return elm
 }
-export function createElement(type, config = {}, children = []) {
+export function createElement (type, config = {}, children = []) {
   const props = {}
   const ref = config.ref || null
   const key = config.key || null
@@ -101,7 +102,7 @@ export function createElement(type, config = {}, children = []) {
   return Element(type, key, ref, props, children.flat())
 }
 
-function Element(type, key, ref, props, children) {
+function Element (type, key, ref, props, children) {
   let element
   if (type === 'text') {
     element = {
