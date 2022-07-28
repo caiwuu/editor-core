@@ -5,7 +5,6 @@ const root = {
   type: 'component',
   render: (h, vnode, data) => {
     return <Root data={data}></Root>
-
   },
 }
 const paragraph = {
@@ -133,19 +132,8 @@ const image = {
     return vn
   },
 }
-  ;[
-    root,
-    bold,
-    image,
-    underline,
-    fontSize,
-    color,
-    paragraph,
-    del,
-    sup,
-    table,
-    row,
-    col,
-  ].forEach((ele) => {
+;[root, bold, image, underline, fontSize, color, paragraph, del, sup, table, row, col].forEach(
+  (ele) => {
     formater.register(ele)
-  })
+  }
+)
